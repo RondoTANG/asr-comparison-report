@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASR 引擎效果评估：录音转写质量对比报告</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --danger-bg: #fef2f2;
+            --danger-border: #fecaca;
+            --danger-text: #dc2626;
+            --success-bg: #f0fdf4;
+            --success-border: #bbf7d0;
+            --success-text: #16a34a;
+            --border: #e2e8f0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            font-size: 32px;
+            color: #0f172a;
+            margin-bottom: 12px;
+            letter-spacing: -0.025em;
+        }
+        .header p {
+            color: var(--text-muted);
+            font-size: 16px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .summary-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            margin-bottom: 40px;
+            border: 1px solid var(--border);
+        }
+        .summary-card h2 {
+            font-size: 22px;
+            margin-top: 0;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+        .summary-card h2::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 24px;
+            background-color: var(--primary);
+            border-radius: 2px;
+        }
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        .summary-item {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            transition: transform 0.2s;
+        }
+        .summary-item:hover {
+            transform: translateY(-2px);
+        }
+        .summary-item h3 {
+            font-size: 16px;
+            margin: 0 0 12px 0;
+            color: #334155;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .summary-item .tag {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 99px;
+            background: #e0e7ff;
+            color: #4f46e5;
+            font-weight: 500;
+        }
+        .diff-box {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .diff-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+        }
+        .diff-label {
+            width: 48px;
+            font-weight: 500;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+        .highlight-bad {
+            background-color: var(--danger-bg);
+            color: var(--danger-text);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            border: 1px solid var(--danger-border);
+        }
+        .highlight-good {
+            background-color: var(--success-bg);
+            color: var(--success-text);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            border: 1px solid var(--success-border);
+        }
+        .section-title {
+            font-size: 24px;
+            color: #0f172a;
+            margin: 48px 0 24px 0;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border);
+        }
+        .compare-section {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        .compare-column {
+            flex: 1;
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .compare-header {
+            padding: 20px 24px;
+            background: #f1f5f9;
+            border-bottom: 1px solid var(--border);
+            text-align: center;
+        }
+        .compare-header h2 {
+            margin: 0;
+            font-size: 18px;
+            color: #0f172a;
+        }
+        .compare-body {
+            padding: 24px;
+            flex: 1;
+            height: 600px;
+            overflow-y: auto;
+            font-size: 14px;
+            color: #334155;
+            background: #fafafa;
+        }
+        .line-item {
+            margin-bottom: 12px;
+            padding: 8px 12px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #f0f0f0;
+            line-height: 1.5;
+        }
+        .role {
+            font-weight: 600;
+            color: var(--primary);
+            margin-right: 8px;
+        }
+        .role.client {
+            color: #ea580c;
+        }
+        .time {
+            color: #94a3b8;
+            font-size: 12px;
+            margin-right: 8px;
+        }
+        .conclusion {
+            margin-top: 40px;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 16px;
+            padding: 32px;
+        }
+        .conclusion h3 {
+            color: #1e3a8a;
+            margin-top: 0;
+            font-size: 20px;
+        }
+        .conclusion p {
+            color: #1e40af;
+            margin-bottom: 0;
+        }
+        
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ASR 转写方案底层数据质量对比评估</h1>
+            <p>基于两通真实线索录音的横向全量评测，对比【旧版离线 ASR】与【新版大模型 ASR】的原始文本，为“智能体打标”业务提供直接决策依据。</p>
+        </div>
+
+        <div class="summary-card">
+            <h2>核心差异提炼（PM视角）</h2>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <h3>致命业务意图幻觉 <span class="tag">打标核心影响</span></h3>
+                    <div class="diff-box">
+                        <div class="diff-row">
+                            <span class="diff-label">旧版</span>
+                            <span class="highlight-bad">小自行车</span> / <span class="highlight-bad">中风</span>
+                        </div>
+                        <div class="diff-row">
+                            <span class="diff-label">新版</span>
+                            <span class="highlight-good">首次购车</span> / <span class="highlight-good">终身质本</span>
+                        </div>
+                        <div style="font-size: 12px; color: #64748b; margin-top: 4px;">影响：旧版数据会导致智能体无法判断用户购车类别，直接打标失败。</div>
+                    </div>
+                </div>
+                
+                <div class="summary-item">
+                    <h3>关键转化周期缺失 <span class="tag">销售线索影响</span></h3>
+                    <div class="diff-box">
+                        <div class="diff-row">
+                            <span class="diff-label">旧版</span>
+                            <span class="highlight-bad">我一个月的工资</span>
+                        </div>
+                        <div class="diff-row">
+                            <span class="diff-label">新版</span>
+                            <span class="highlight-good">我一个月内购车</span>
+                        </div>
+                        <div style="font-size: 12px; color: #64748b; margin-top: 4px;">影响：核心时间线索丢失，把时间周期识别成了毫无逻辑的金钱描述。</div>
+                    </div>
+                </div>
+
+                <div class="summary-item">
+                    <h3>车企销讲政策灾难 <span class="tag">权益解析影响</span></h3>
+                    <div class="diff-box">
+                        <div class="diff-row">
+                            <span class="diff-label">旧版</span>
+                            <span class="highlight-bad">超级致幻镜</span> / <span class="highlight-bad">超级计算机</span> / <span class="highlight-bad">药业红</span>
+                        </div>
+                        <div class="diff-row">
+                            <span class="diff-label">新版</span>
+                            <span class="highlight-good">超级置换金</span> / <span class="highlight-good">超值置换金</span> / <span class="highlight-good">耀夜红</span>
+                        </div>
+                        <div style="font-size: 12px; color: #64748b; margin-top: 4px;">影响：谐音词极易引发合规风险与权益打标错误，新版对行业词汇适配极佳。</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">▶ 录音一 全文对比 (8149_..._091053)</h2>
+        <div class="compare-section">
+            <!-- 旧版 8149 -->
+            <div class="compare-column">
+                <div class="compare-header">
+                    <h2>当前线上旧版 ASR 结果</h2>
+                </div>
+                <div class="compare-body">
+                    <div class="line-item"><span class="time">09:10:54</span><span class="role">销售:</span>您好，东风日产厂家给您来电的。</div>
+                    <div class="line-item"><span class="time">09:10:57</span><span class="role">销售:</span>看您在关注我们的天籁鸿蒙座舱的，是吗？</div>
+                    <div class="line-item"><span class="time">09:11:02</span><span class="role">销售:</span>感谢您的关注啊，嗯官方指导价格是13.99万到18.29万的。</div>
+                    <div class="line-item"><span class="time">09:11:08</span><span class="role">销售:</span>嗯，那想问一下您这边是打算置换还是首次购车呢？</div>
+                    <div class="line-item"><span class="time">09:11:15</span><span class="role client">客户:</span>47900的。</div>
+                    <div class="line-item"><span class="time">09:11:18</span><span class="role">销售:</span>嗯，是什么期间？</div>
+                    <div class="line-item"><span class="time">09:11:20</span><span class="role">销售:</span>9。</div>
+                    <div class="line-item"><span class="time">09:11:22</span><span class="role client">客户:</span>但其实有那个。</div>
+                    <div class="line-item"><span class="time">09:11:24</span><span class="role client">客户:</span>中配吧。</div>
+                    <div class="line-item"><span class="time">09:11:26</span><span class="role">销售:</span>哦，147900的。</div>
+                    <div class="line-item"><span class="time">09:11:28</span><span class="role">销售:</span>哦，好的好的，您这边是打算置换还是首次购车呀？</div>
+                    <div class="line-item"><span class="time">09:11:34</span><span class="role client">客户:</span>首次购车。</div>
+                    <div class="line-item"><span class="time">09:11:36</span><span class="role">销售:</span>哦，好的好的啊，那我。</div>
+                    <div class="line-item"><span class="time">09:11:37</span><span class="role client">客户:</span>首次对那个<span class="highlight-bad">中风</span>。</div>
+                    <div class="line-item"><span class="time">09:11:40</span><span class="role">销售:</span>哦，好的好的，感谢您对东风日产的支持呀。</div>
+                    <div class="line-item"><span class="time">09:11:43</span><span class="role">销售:</span>那嗯东风日产啊这一款嗯天籁鸿蒙座舱的话，在4月30号前下订，那可享一个啊<span class="highlight-bad">超级计算机</span>啊1万元。</div>
+                    <div class="line-item"><span class="time">09:11:52</span><span class="role">销售:</span>那还有我们价值39000元的限时购车权益。</div>
+                    <div class="line-item"><span class="time">09:11:56</span><span class="role">销售:</span>那我这边同步添加一下您的微信，把权益发送给您，了解一下，方便吗？</div>
+                    <div class="line-item"><span class="time">09:12:03</span><span class="role client">客户:</span>不是我想我在抖音上问他他说7000块钱那个是红色那个内饰那个是吧？</div>
+                    <div class="line-item"><span class="time">09:12:09</span><span class="role client">客户:</span>他是免费的，是怎么说的？</div>
+                    <div class="line-item"><span class="time">09:12:11</span><span class="role client">客户:</span>是真免费还是假的？</div>
+                    <div class="line-item"><span class="time">09:12:14</span><span class="role">销售:</span>嗯，您稍等一下，我这边为您查询一下，请稍等。</div>
+                    <div class="line-item"><span class="time">09:12:20</span><span class="role client">客户:</span>对呀，那抖音直播是那个我有我有录屏的。</div>
+                    <div class="line-item"><span class="time">09:12:24</span><span class="role client">客户:</span>你说是7000块钱，这个这个免费免费的，我才点了一下。</div>
+                    <div class="line-item"><span class="time">09:12:30</span><span class="role">销售:</span>哦，这边查询到是呃啊邀约黑勇士啊，免费送的，这个是类似。</div>
+                    <div class="line-item"><span class="time">09:12:36</span><span class="role">销售:</span>然后这个是的话呢是呃超级舒适版，以上的话啊可以选选配的。</div>
+                    <div class="line-item"><span class="time">09:12:43</span><span class="role">销售:</span>嗯，可选。</div>
+                    <div class="line-item"><span class="time">09:12:46</span><span class="role client">客户:</span>可想这7000块钱怎么说还是付费还是不付费呢？</div>
+                    <div class="line-item"><span class="time">09:12:47</span><span class="role">销售:</span>嗯，具体。</div>
+                    <div class="line-item"><span class="time">09:12:50</span><span class="role">销售:</span>哦，这个是免费的。</div>
+                    <div class="line-item"><span class="time">09:12:53</span><span class="role client">客户:</span>你说我现在，比如说我今天去那个<span class="highlight-bad">清晨提车</span>的话，是选这个红色是免费的，是吧？</div>
+                    <div class="line-item"><span class="time">09:13:02</span><span class="role">销售:</span>啊，选择这个颜色是免费的。</div>
+                    <div class="line-item"><span class="time">09:13:05</span><span class="role">销售:</span>类似。</div>
+                    <div class="line-item"><span class="time">09:13:08</span><span class="role">销售:</span>嗯，那您看我这边同步添加一下您的微信，把啊活动都发送给您了解一下，可以吗？</div>
+                    <div class="line-item"><span class="time">09:13:15</span><span class="role">销售:</span>啊，您的微信名是叫许梅是吗？</div>
+                    <div class="line-item"><span class="time">09:13:18</span><span class="role client">客户:</span>嗯，对。</div>
+                    <div class="line-item"><span class="time">09:13:19</span><span class="role">销售:</span>嗯，好的，我叫佳佳的啊。</div>
+                    <div class="line-item"><span class="time">09:13:21</span><span class="role">销售:</span>我这边的话已经发送好友申请过去了。</div>
+                    <div class="line-item"><span class="time">09:13:24</span><span class="role">销售:</span>我是官方企业，微信添加您的那稍后您在微信聊天栏那里会收到一个服务通知，那麻烦您这边点进去，长按识别二维码通过一下哦。</div>
+                    <div class="line-item"><span class="time">09:13:34</span><span class="role client">客户:</span>啊，他还有其他权益没有？</div>
+                    <div class="line-item"><span class="time">09:13:37</span><span class="role">销售:</span>啊，那还有包括。</div>
+                    <div class="line-item"><span class="time">09:13:37</span><span class="role client">客户:</span>147900，还有什么什么权益？</div>
+                    <div class="line-item"><span class="time">09:13:41</span><span class="role">销售:</span>那我们目前的话。</div>
+                    <div class="line-item"><span class="time">09:13:41</span><span class="role client">客户:</span>还有购置税补贴的什么的，都有什么呢？</div>
+                    <div class="line-item"><span class="time">09:13:44</span><span class="role client">客户:</span>你给我介绍一下吧。</div>
+                    <div class="line-item"><span class="time">09:13:47</span><span class="role">销售:</span>那我们还有一个现在有一个39000元的限时购车权益嘛。</div>
+                    <div class="line-item"><span class="time">09:13:52</span><span class="role">销售:</span>那啊包括刚刚我们提到的那个啊<span class="highlight-bad">药业红</span>的那个价值是7000元的，内饰是免费送的那还有一些无忧礼呀等等的啊。</div>
+                    <div class="line-item"><span class="time">09:14:01</span><span class="role">销售:</span>您添加我的微信后，我把这些啊还嗯详细的内容都发送给您，详细了解一下啊。</div>
+                    <div class="line-item"><span class="time">09:14:07</span><span class="role client">客户:</span>呃，你说那个37000，你听我说，你说那个37900那个补贴是在147900的呃，基础上补贴还是另外的补贴啊，怎么说的？</div>
+                    <div class="line-item"><span class="time">09:14:08</span><span class="role">销售:</span>您看现在。</div>
+                    <div class="line-item"><span class="time">09:14:21</span><span class="role">销售:</span>3万39000元，那是呃包含有一些啊价值2万元的整车终身质保和一些终身和终生免费保养的。</div>
+                    <div class="line-item"><span class="time">09:14:32</span><span class="role">销售:</span>啊，那我们这里还有一个，那刚刚提到了一个<span class="highlight-bad">超级计算金</span>。</div>
+                    <div class="line-item"><span class="time">09:14:37</span><span class="role">销售:</span>那。</div>
+                    <div class="line-item"><span class="time">09:14:40</span><span class="role client">客户:</span>啊，你给我发一下，我看看吧，好吧。</div>
+                    <div class="line-item"><span class="time">09:14:40</span><span class="role">销售:</span>好。</div>
+                    <div class="line-item"><span class="time">09:14:42</span><span class="role">销售:</span>嗯，好的好的，您看添加一下我的微信，您看有收到吗？</div>
+                    <div class="line-item"><span class="time">09:14:43</span><span class="role client">客户:</span>嗯，嗯嗯。</div>
+                    <div class="line-item"><span class="time">09:14:46</span><span class="role client">客户:</span>嗯，我现在正开车呢，那等会儿吧，好吧。</div>
+                    <div class="line-item"><span class="time">09:14:49</span><span class="role">销售:</span>哦，好好的好的啊，那您是在新乡这边用车是吗？</div>
+                    <div class="line-item"><span class="time">09:14:51</span><span class="role client">客户:</span>好的好。</div>
+                    <div class="line-item"><span class="time">09:14:54</span><span class="role client">客户:</span>对。</div>
+                    <div class="line-item"><span class="time">09:14:55</span><span class="role">销售:</span>嗯，那嗯具体的门店地址是在一个新乡县朗公庙镇107国际汽车城内这家新乡微信店的那您有空的话，可以随时到门店去试乘试驾体验一下的。</div>
+                    <div class="line-item"><span class="time">09:15:06</span><span class="role client">客户:</span>我是在新中大道这边呢，在北环上。</div>
+                    <div class="line-item"><span class="time">09:15:10</span><span class="role">销售:</span>啊，好的好的，那您稍等一下。</div>
+                    <div class="line-item"><span class="time">09:15:11</span><span class="role client">客户:</span>我可以可不可以去别的店选啊？</div>
+                    <div class="line-item"><span class="time">09:15:15</span><span class="role">销售:</span>呃，新乡镇呃，您现在郑州这边是吧？</div>
+                    <div class="line-item"><span class="time">09:15:19</span><span class="role">销售:</span>河南郑州。</div>
+                    <div class="line-item"><span class="time">09:15:20</span><span class="role client">客户:</span>在新乡，河南新乡北环。</div>
+                    <div class="line-item"><span class="time">09:15:23</span><span class="role">销售:</span>哦。</div>
+                    <div class="line-item"><span class="time">09:15:25</span><span class="role">销售:</span>嗯，您稍等一下，我这边为您查询一下，请稍等。</div>
+                    <div class="line-item"><span class="time">09:15:28</span><span class="role client">客户:</span>嗯。</div>
+                    <div class="line-item"><span class="time">09:15:30</span><span class="role">销售:</span>嗯，好的。</div>
+                    <div class="line-item"><span class="time">09:15:31</span><span class="role">销售:</span>啊，女士您好，那新疆的话，目前的话，我这边只能查询到有。</div>
+                    <div class="line-item"><span class="time">09:15:37</span><span class="role">销售:</span>呃，刚刚提到的这一家门店的。</div>
+                    <div class="line-item"><span class="time">09:15:42</span><span class="role client">客户:</span>不对呀，新疆北环那是最大的东风日产。</div>
+                    <div class="line-item"><span class="time">09:15:47</span><span class="role">销售:</span>嗯，我这边。</div>
+                    <div class="line-item"><span class="time">09:15:48</span><span class="role client">客户:</span>你再查一下。</div>
+                    <div class="line-item"><span class="time">09:15:50</span><span class="role">销售:</span>我这边系统下发的话，只能下发到呃新乡微信店这一家门店的。</div>
+                    <div class="line-item"><span class="time">09:15:58</span><span class="role">销售:</span>嗯，就是在呃，朗公庙镇这一边这一家。</div>
+                    <div class="line-item"><span class="time">09:16:05</span><span class="role">销售:</span>到时候你也可以到。</div>
+                    <div class="line-item"><span class="time">09:16:05</span><span class="role client">客户:</span>在小店的吗？</div>
+                    <div class="line-item"><span class="time">09:16:07</span><span class="role">销售:</span>呃，不晓得，那到时候您到去门店也可以啊，看一下嘛。</div>
+                    <div class="line-item"><span class="time">09:16:12</span><span class="role">销售:</span>那稍后我这边也安排马上安排门店的专业产品顾问给您一个呃详细的落地价呀、金融政策呀。</div>
+                    <div class="line-item"><span class="time">09:16:19</span><span class="role">销售:</span>那您这边也注意一下电话的接听哦。</div>
+                    <div class="line-item"><span class="time">09:16:23</span><span class="role client">客户:</span>嗯，好吧。</div>
+                    <div class="line-item"><span class="time">09:16:24</span><span class="role">销售:</span>嗯，好，那这边就先不打扰您了。</div>
+                    <div class="line-item"><span class="time">09:16:24</span><span class="role client">客户:</span>好，谢谢啊。</div>
+                    <div class="line-item"><span class="time">09:16:26</span><span class="role">销售:</span>不客气，祝您生活愉快，再见。</div>
+                </div>
+            </div>
+
+            <!-- 新版 8149 -->
+            <div class="compare-column">
+                <div class="compare-header">
+                    <h2>新一代大模型 ASR (roleType=1)</h2>
+                </div>
+                <div class="compare-body">
+                    <div class="line-item"><span class="role">角色1 (销售):</span>您好，东风日产厂家给您来电的，看您在关注我们的天籁鸿蒙座舱的是吗？</div>
+                    <div class="line-item"><span class="role client">角色2 (客户):</span>嗯对，</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>感谢您的关注，啊</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>官方指导价格是13.99万到18.29万的，嗯那想问一下您这边是打算置换还是首次购车？</div>
+                    <div class="line-item"><span class="role client">角色2 (客户):</span>呢47,900的</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>嗯是什么？7094。</div>
+                    <div class="line-item"><span class="role client">角色2 (客户):</span>47,900那个中配吧</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>噢147,900的。噢好的好的，您这边是打算置换还是首次购车呀</div>
+                    <div class="line-item"><span class="role client">角色2 (客户):</span>首次购车？</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>噢好的好的，</div>
+                    <div class="line-item"><span class="role client">角色2 (客户):</span>首次送那个<span class="highlight-good">终身质本</span>。</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>噢好的好的，感谢您对东风日产的支持，呀那嗯东风日产啊这一款嗯天籁鸿蒙座舱的话，在4月30号前下订那后可享一个嗯<span class="highlight-good">超值置换金</span>，</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>啊1万元，那还有我价值39,000元的限时购车权益的。</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>那我这边同步添加一下您的微信，把权益发送给您了解一下方便吗？</div>
+                    <div class="line-item"><span class="role client">角色2 (客户):</span>不是，我想我在抖音上问他，他说7000块钱那个选红色那个内饰那个是吧？</div>
+                    <div class="line-item"><span class="role client">角色2 (客户):</span>它是免费的，是怎么说的？是真免费还是假的？嗯</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>您稍等一下，我这边为您查询一下，请稍等</div>
+                    <div class="line-item"><span class="role client">角色2 (客户):</span>对。呀你抖音直播是那个我有我有录屏的，你说是7000块钱这个这个免费免费的，</div>
+                    <div class="line-item"><span class="role client">角色2 (客户):</span>我才点了一下。</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>噢这边查询到是噢啊耀夜黑勇士啊免费送的那个是类似，然后这个是的话呢是啊超值舒适版以上的话啊可以选选配的嗯可选。</div>
+                    <div class="line-item"><span class="role client">角色2 (客户):</span>可选这几千块钱怎么说还是付费还是不付费，呢</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>噢这个是免费的。</div>
+                    <div class="line-item"><span class="role client">角色2 (客户):</span>你说我现在比如说我今天去那个去那提车的话，是选这个红色是免费的是吧？</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>啊是。</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>选择这个颜色是免费的内饰。嗯那您看我这边同步添加一下您的微信，把啊活动都发送给您了解一下可以吗？啊您的微信名是叫许梅是吗？</div>
+                    <div class="line-item"><span class="role client">角色2 (客户):</span>嗯对。</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>嗯好的，我叫佳佳的，啊我这边的话已经发送好友申请过去了，我是官方企业微信添加您的，那稍后您在微信聊天栏那里会收到一个服务通知，那麻烦您这边点进去，长按识别二维码通过一下。</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>噢</div>
+                    <div class="line-item"><span class="role client">角色2 (客户):</span>啊它还有其他权益没有147,900，还有什么什么权益？还有购置补补贴的什么的都有什么呢你给我介绍一下，吧</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>那我们还有一个现在有一个39,000元的限时购车权益，嘛</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>那啊包括刚刚我们提到的那个啊<span class="highlight-good">耀夜红</span>的那个价值是7000元的内饰是免费送的，那还有一些无忧礼呀等等的，噢您添加我的微信后，我把这些啊还</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>嗯详细的内容都发送给您，详细了解一下，</div>
+                    <div class="line-item"><span class="role client">角色2 (客户):</span>呃你说那个37,000你听我说你说那个37,900那个补贴是在147,900的呃基础上补贴，还是另外的补贴啊怎么说的？</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>3万 39,000元那是啊包含有一些啊价值2万元的整车终身质保和一些终身和终身免费保养的。啊那我们的那还有一个那个刚刚提到的一个<span class="highlight-good">超值置换金</span>，啊</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>那</div>
+                    <div class="line-item"><span class="role client">角色2 (客户):</span>啊你给我发一下我看看吧好吧？</div>
+                    <div class="line-item"><span class="role client">角色2 (客户):</span>嗯</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>好的好的，您看添加一下我的微信，您看有收到吗？</div>
+                    <div class="line-item"><span class="role client">角色2 (客户):</span>嗯我现在正开车呢那等会吧好吧。</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>好的好的好，那您是在新乡这边用车是吗？</div>
+                    <div class="line-item"><span class="role client">角色2 (客户):</span>对。</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>噢那嗯具体的门店地址是在一个新乡县朗公庙镇107国际汽车城内这家新乡威信店的，那您有空的话可以随时到门店去试乘试驾体验一下的，</div>
+                    <div class="line-item"><span class="role client">角色2 (客户):</span>我是在新中大道这边，呢在北环。</div>
+                    <div class="line-item"><span class="role client">角色2 (客户):</span>呢</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>嗯好的好的，</div>
+                    <div class="line-item"><span class="role client">角色2 (客户):</span>我可以可不可以去别的店选啊</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>呃新乡郑？呃您郑在郑州这边是吧？河南郑州</div>
+                    <div class="line-item"><span class="role client">角色2 (客户):</span>在新乡，河南新乡。北环</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>噢嗯您稍等一下，我这边为您查询一下，请稍等。</div>
+                    <div class="line-item"><span class="role client">角色2 (客户):</span>嗯</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>嗯好的，呃女士您好，那新乡的话目前的话我这边只能查询到有呃刚刚提到的这一家门店的。</div>
+                    <div class="line-item"><span class="role client">角色2 (客户):</span>不对，呀新乡北环那是个最大的东风日产。</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>嗯我</div>
+                    <div class="line-item"><span class="role client">角色2 (客户):</span>我再查一下，</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>我这边系统下发的话，只能下发到噢新乡微信店这一家门店的，嗯就是在呃朗公庙镇这一边这一家。</div>
+                    <div class="line-item"><span class="role client">角色2 (客户):</span>那小店的吗？</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>呃不晓得，那到时候您到去门店也可以啊看一下。嘛</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>那稍后我这边也安排马上安排门店的专业产品顾问给您一个嗯详细的落地价呀金融政策，呀那您这边要注意一下电话的接听了。</div>
+                    <div class="line-item"><span class="role client">角色2 (客户):</span>嗯好吧好。谢谢，啊</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>就先不打扰您了，啊不客气，祝您生活愉快，再见。</div>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">▶ 录音二 全文对比 (8167_..._120653)</h2>
+        <div class="compare-section">
+            <!-- 旧版 8167 -->
+            <div class="compare-column">
+                <div class="compare-header">
+                    <h2>当前线上旧版 ASR 结果</h2>
+                </div>
+                <div class="compare-body">
+                    <div class="line-item"><span class="time">12:06:54</span><span class="role">销售:</span>喂，您好，东风日产厂家给您来电的。</div>
+                    <div class="line-item"><span class="time">12:06:57</span><span class="role">销售:</span>看到您有关注我们新款车插混车型N6，方便我给您预约试驾体验一下吗？</div>
+                    <div class="line-item"><span class="time">12:07:05</span><span class="role client">客户:</span>可以。</div>
+                    <div class="line-item"><span class="time">12:07:06</span><span class="role">销售:</span>感谢您关注先生。</div>
+                    <div class="line-item"><span class="time">12:07:08</span><span class="role">销售:</span>这款车呢是东风日产首款插混车型，可油可电的官方指导价是9.99万到12.99万元起。</div>
+                    <div class="line-item"><span class="time">12:07:13</span><span class="role client">客户:</span>啊。</div>
+                    <div class="line-item"><span class="time">12:07:16</span><span class="role">销售:</span>请问您是打算置换增购还是首次购车呢？</div>
+                    <div class="line-item"><span class="time">12:07:20</span><span class="role client">客户:</span><span class="highlight-bad">小自行车</span>。</div>
+                    <div class="line-item"><span class="time">12:07:22</span><span class="role">销售:</span>嗯，好的，明白。</div>
+                    <div class="line-item"><span class="time">12:07:23</span><span class="role">销售:</span>如果您在4月30日前下午可以享受以下权益的。</div>
+                    <div class="line-item"><span class="time">12:07:27</span><span class="role">销售:</span>可以享受最高12000元的购车权益，还有无套路自然包赔12000元的。</div>
+                    <div class="line-item"><span class="time">12:07:33</span><span class="role">销售:</span>现在权益呢包括5000元的<span class="highlight-bad">超级致幻镜</span>，这个是立减的。</div>
+                    <div class="line-item"><span class="time">12:07:37</span><span class="role">销售:</span>还有价值7000元的大红大紫内饰，是免费赠送给您的。</div>
+                    <div class="line-item"><span class="time">12:07:41</span><span class="role">销售:</span>现在权益价呢是9.49万元起的，其中一款新出的<span class="highlight-bad">M6 pro加</span>它的现在权益价是11.19万元起。</div>
+                    <div class="line-item"><span class="time">12:07:49</span><span class="role">销售:</span>这个月的购车权益会比较多。</div>
+                    <div class="line-item"><span class="time">12:07:51</span><span class="role">销售:</span>先生，请问您是计划什么时候购车呢？</div>
+                    <div class="line-item"><span class="time">12:07:55</span><span class="role client">客户:</span><span class="highlight-bad">我一个月的工资</span>，我到下周四到店里去看一下，就是说打电话好吧。</div>
+                    <div class="line-item"><span class="time">12:07:59</span><span class="role">销售:</span>嗯。</div>
+                    <div class="line-item"><span class="time">12:08:01</span><span class="role">销售:</span>可以的，没问题的。</div>
+                    <div class="line-item"><span class="time">12:08:02</span><span class="role">销售:</span>请问您是在这个忻州这边用车吗？</div>
+                    <div class="line-item"><span class="time">12:08:05</span><span class="role">销售:</span>山西省这里。</div>
+                    <div class="line-item"><span class="time">12:08:06</span><span class="role client">客户:</span>对，是的，<span class="highlight-bad">今天跟大家说现在忙着呢</span>。</div>
+                    <div class="line-item"><span class="time">12:08:10</span><span class="role client">客户:</span>好，今天。</div>
+                    <div class="line-item"><span class="time">12:08:10</span><span class="role">销售:</span>嗯，好。</div>
+                </div>
+            </div>
+
+            <!-- 新版 8167 -->
+            <div class="compare-column">
+                <div class="compare-header">
+                    <h2>新一代大模型 ASR (roleType=1)</h2>
+                </div>
+                <div class="compare-body">
+                    <div class="line-item"><span class="role">角色1 (销售):</span>喂您好，东风日产厂家给您来电的，看到您有关注我们新款车插混车型n6，方便我给您预约试驾体验一下吗？</div>
+                    <div class="line-item"><span class="role client">角色2 (客户):</span>可以。</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>感谢您关注先生，这款车呢是东风日产首款插混车型，可油可电的官方指导价是9.99万到12.99万元起，请问您是打算置换增购还是首次购车呢</div>
+                    <div class="line-item"><span class="role client">角色2 (客户):</span><span class="highlight-good">首次购车？</span></div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>嗯好的，明白，如果您在4月30日前下订可以享受以下权益的，可以享受最高12,000元的购车权益，还有无套路自然包赔。</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>12,000元的限时权益，呢包括5000元的<span class="highlight-good">超级置换金</span>，这个是立减的，还有价值7000元的大红大紫，内饰是免费赠送给您的，</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>限时权益价呢是9.49万元起的，其中一款新出的<span class="highlight-good">n6Pro +</span>它的限时权益价是11.19万元起，这个月的购车权益会比较多，先生，请问您是计划什么时候购车？</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>呢</div>
+                    <div class="line-item"><span class="role client">角色2 (客户):</span><span class="highlight-good">我一个月内购车</span>，我在下周四到店里去看一下，就是说等电话好吧？</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>可以的没问题的，请问您是在这个忻州这边用车吗？山西省这里，</div>
+                    <div class="line-item"><span class="role client">角色2 (客户):</span>对是的，<span class="highlight-good">就是我给你打电话，现在忙着</span>，呢好再见。啊</div>
+                    <div class="line-item"><span class="role">角色1 (销售):</span>嗯好的。</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="conclusion">
+            <h3>产品落地结论建议</h3>
+            <p><strong>大模型业务的瓶颈往往在数据清洗层，而非提示词与模型侧。</strong> 旧版 ASR 存在大量逻辑错乱的文本（超级致幻镜、小自行车），这种带有极强误导性的噪声直接投喂给打标智能体，必然导致打标准确率低下。新版 ASR 已经达到了无需二次加工即可准确提取【关键周期】、【转化意向】和【交易金额】的可用标准。<strong>强烈建议将此 HTML 发送给业务方作为宣贯抓手，坚决推进底层 ASR 服务的技术迭代，保持原有“ASR转文本->智能体打标”架构。</strong></p>
+        </div>
+    </div>
+</body>
+</html>
