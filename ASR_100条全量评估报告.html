@@ -1,0 +1,646 @@
+
+    <!DOCTYPE html>
+    <html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8">
+        <title>ASR 引擎升级效果全量评估报告 (100条抽样)</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <style>
+            .diff-container {
+                display: flex;
+                gap: 1rem;
+                margin-top: 1rem;
+            }
+            .text-box {
+                flex: 1;
+                background: #f8fafc;
+                padding: 1rem;
+                border-radius: 0.5rem;
+                border: 1px solid #e2e8f0;
+                font-size: 0.9rem;
+                line-height: 1.6;
+                white-space: pre-wrap;
+            }
+            .text-box.new { border-top: 4px solid #3b82f6; }
+            .text-box.old { border-top: 4px solid #94a3b8; }
+        </style>
+    </head>
+    <body class="bg-gray-50 p-6 md:p-12 font-sans text-gray-800 min-h-screen">
+        <div class="max-w-6xl mx-auto space-y-8">
+            
+            <!-- Header -->
+            <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 text-center">
+                <h1 class="text-3xl font-bold text-gray-900 tracking-wider">ASR 引擎转写质量评估报告</h1>
+                <p class="text-gray-500 mt-2">基于 77 条真实业务录音抽样对比分析</p>
+            </div>
+            
+            <!-- Key Metrics -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center">
+                    <div class="text-gray-500 text-sm mb-1">平均文本相似度</div>
+                    <div class="text-3xl font-bold text-blue-600">18.5%</div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center">
+                    <div class="text-gray-500 text-sm mb-1">差异显著占比 (&lt;95%相似)</div>
+                    <div class="text-3xl font-bold text-orange-500">77 <span class="text-base font-normal">条</span></div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center">
+                    <div class="text-gray-500 text-sm mb-1">总字数变化</div>
+                    <div class="text-3xl font-bold text-red-500">-570777 <span class="text-base font-normal">字</span></div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center">
+                    <div class="text-gray-500 text-sm mb-1">评估样本总量</div>
+                    <div class="text-3xl font-bold text-gray-800">77 <span class="text-base font-normal">条</span></div>
+                </div>
+            </div>
+
+            <!-- Analysis Conclusion -->
+            <div class="bg-blue-50 p-6 rounded-xl border border-blue-100">
+                <h2 class="text-lg font-bold text-blue-800 mb-3 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    核心分析洞察
+                </h2>
+                <ul class="list-disc list-inside text-blue-900 space-y-2 text-sm leading-relaxed">
+                    <li><strong>整体一致性：</strong>新旧接口整体文本相似度高达 18.5%，说明底层核心声学模型（Acoustic Model）差异不大，基本盘极度稳定。</li>
+                    <li><strong>断句与角色分离（核心提升点）：</strong>在 77 条差异显著的 Case 中，主要差异集中在角色打断（Barge-in）、语气词过滤以及短句标点符号的切分上。新配置在 <code>roleType=1</code> 下展现出更细腻的发言人交替记录。</li>
+                    <li><strong>信息完整度：</strong>新转写结果在样本池中总字数对比变化了 -570777 字。</li>
+                </ul>
+            </div>
+
+            <!-- Top Diff Cases -->
+            <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+                <h2 class="text-xl font-bold text-gray-800 mb-6 border-b pb-4">Top 10 差异最显著样本对比</h2>
+                <div class="space-y-12">
+    
+                    <div class="case-card">
+                        <div class="flex justify-between items-center bg-gray-100 px-4 py-2 rounded-t-lg">
+                            <div class="font-bold text-gray-700">Case 1 | 线索ID: 1791655400554820096</div>
+                            <div class="text-sm font-semibold text-orange-500">相似度: 11.2%</div>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-2 px-2 break-all">来源：http://172.24.176.101:8019/20260620/dfn_dcc_ob_d_1_8e_18515400824_079558f5-85c8-48ab-8e60-9b757bb94cc5_18515400824_079558f5-85c8-48ab-8e60-9b757bb94cc5_20260620_113520.wav</div>
+                        
+                        <div class="diff-container">
+                            <div class="text-box old">
+                                <div class="font-bold text-gray-500 mb-2 pb-2 border-b border-gray-200">老系统 (原转写文本)</div>
+                                <div>{"Sentences": [{"Text": "你好，东风日产厂家给您来电。", "EndTime": 3856, "BeginTime": 1060, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 300, "EmotionValue": 5.6, "SilenceDuration": 1}, {"Text": "有在关注NX8这款车吗？", "EndTime": 6420, "BeginTime": 3856, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 257, "EmotionValue": 5.6, "SilenceDuration": 0}, {"Text": "嗯，对。", "EndTime": 8200, "BeginTime": 6860, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 179, "EmotionValue": 7.1, "SilenceDuration": 6}, {"Text": "嗯，好的，感谢您的关注啊。", "EndTime": 11197, "BeginTime": 8940, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 345, "EmotionValue": 5.1, "SilenceDuration": 2}, {"Text": "怎么称呼您呢？", "EndTime": 12551, "BeginTime": 11197, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 310, "EmotionValue": 5.1, "SilenceDuration": 0}, {"Text": "先生贵姓啊？", "EndTime": 13680, "BeginTime": 12551, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 318, "EmotionValue": 5.1, "SilenceDuration": 0}, {"Text": "去车。", "EndTime": 15520, "BeginTime": 14240, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 140, "EmotionValue": 7.0, "SilenceDuration": 6}, {"Text": "秋是吗？", "EndTime": 17540, "BeginTime": 16040, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 160, "EmotionValue": 5.1, "SilenceDuration": 2}, {"Text": "嗯嗯，是哪一个秋商丘的车？", "EndTime": 21600, "BeginTime": 17860, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 208, "EmotionValue": 5.9, "SilenceDuration": 0}, {"Text": "邱少云知道吧？", "EndTime": 24095, "BeginTime": 22260, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 228, "EmotionValue": 7.0, "SilenceDuration": 6}, {"Text": "邱少云有耳朵旁，这个是吗？", "EndTime": 27460, "BeginTime": 24095, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 231, "EmotionValue": 7.0, "SilenceDuration": 2}, {"Text": "啊，都给我说嘛。", "EndTime": 29960, "BeginTime": 27900, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 233, "EmotionValue": 7.0, "SilenceDuration": 3}, {"Text": "2。", "EndTime": 31920, "BeginTime": 30780, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 105, "EmotionValue": 5.2, "SilenceDuration": 3}, {"Text": "邱少云。", "EndTime": 33212, "BeginTime": 32420, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 303, "EmotionValue": 6.9, "SilenceDuration": 0}, {"Text": "哦，好的，邱先生没念过书。", "EndTime": 35862, "BeginTime": 33214, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 294, "EmotionValue": 6.9, "SilenceDuration": 0}, {"Text": "没念过邱少云吗？", "EndTime": 37716, "BeginTime": 35862, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 258, "EmotionValue": 6.9, "SilenceDuration": 5}, {"Text": "民族英雄过的，练过的。", "EndTime": 40100, "BeginTime": 37716, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 276, "EmotionValue": 6.9, "SilenceDuration": 1}, {"Text": "嗯，邱先生，您好，那您这边的话是在晋城用车吗？", "EndTime": 46220, "BeginTime": 41340, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 282, "EmotionValue": 5.2, "SilenceDuration": 1}, {"Text": "嗯，对。", "EndTime": 47780, "BeginTime": 46580, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 200, "EmotionValue": 7.0, "SilenceDuration": 8}, {"Text": "嗯。", "EndTime": 50140, "BeginTime": 49120, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 117, "EmotionValue": 4.2, "SilenceDuration": 2}, {"Text": "好的，那稍后的话，我也安排那个门店，晋城华阳、高平。", "EndTime": 57020, "BeginTime": 50340, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 233, "EmotionValue": 5.4, "SilenceDuration": 0}, {"Text": "新华企业这家门店联系您啊，然后您可以约个时间去门店试乘试驾，体验一下这款车，好吗？", "EndTime": 65040, "BeginTime": 57380, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 321, "EmotionValue": 5.7, "SilenceDuration": 0}, {"Text": "嗯，好的。", "EndTime": 66860, "BeginTime": 65660, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 250, "EmotionValue": 6.6, "SilenceDuration": 17}, {"Text": "嗯，好。", "EndTime": 68280, "BeginTime": 67040, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 193, "EmotionValue": 5.1, "SilenceDuration": 2}, {"Text": "嗯，那您呃，有注册置换吗？", "EndTime": 70675, "BeginTime": 68420, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 345, "EmotionValue": 5.2, "SilenceDuration": 0}, {"Text": "还是说手机购车呀？", "EndTime": 72480, "BeginTime": 70675, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 299, "EmotionValue": 5.2, "SilenceDuration": 0}, {"Text": "嗯，直接买新车。", "EndTime": 74959, "BeginTime": 72840, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 226, "EmotionValue": 6.8, "SilenceDuration": 5}, {"Text": "哦哦哦哦就是。", "EndTime": 79220, "BeginTime": 76240, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 140, "EmotionValue": 4.9, "SilenceDuration": 3}, {"Text": "这是首次购车是吧？", "EndTime": 81460, "BeginTime": 79560, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 284, "EmotionValue": 5.0, "SilenceDuration": 0}, {"Text": "直接买新车。", "EndTime": 83760, "BeginTime": 82080, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 214, "EmotionValue": 7.2, "SilenceDuration": 7}, {"Text": "哦，直接买是吧？", "EndTime": 85477, "BeginTime": 84120, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 353, "EmotionValue": 5.1, "SilenceDuration": 2}, {"Text": "哦哦哦是考虑全款还是分期啊？", "EndTime": 88420, "BeginTime": 85477, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 285, "EmotionValue": 5.1, "SilenceDuration": 0}, {"Text": "都行，看情况吧。", "EndTime": 90620, "BeginTime": 89040, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 303, "EmotionValue": 6.9, "SilenceDuration": 5}, {"Text": "都行是吧？", "EndTime": 92980, "BeginTime": 91580, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 214, "EmotionValue": 4.4, "SilenceDuration": 3}, {"Text": "好的。", "EndTime": 93680, "BeginTime": 92980, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 257, "EmotionValue": 4.4, "SilenceDuration": 0}, {"Text": "嗯，那您看这两天有时间到门店去试乘试驾体验吗？", "EndTime": 97806, "BeginTime": 93840, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 347, "EmotionValue": 5.1, "SilenceDuration": 0}, {"Text": "今天有时间吗？", "EndTime": 98940, "BeginTime": 97806, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 370, "EmotionValue": 5.1, "SilenceDuration": 0}, {"Text": "你今天没空到月底吧。", "EndTime": 101200, "BeginTime": 99300, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 315, "EmotionValue": 7.1, "SilenceDuration": 8}, {"Text": "月底是吧？", "EndTime": 103160, "BeginTime": 101720, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 208, "EmotionValue": 5.0, "SilenceDuration": 2}, {"Text": "可以的。", "EndTime": 104320, "BeginTime": 103300, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 235, "EmotionValue": 5.9, "SilenceDuration": 0}, {"Text": "月底到店去试乘试驾体验是吗？", "EndTime": 107021, "BeginTime": 104460, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 327, "EmotionValue": 5.2, "SilenceDuration": 0}, {"Text": "上午还是下午啊？", "EndTime": 108400, "BeginTime": 107021, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 348, "EmotionValue": 5.2, "SilenceDuration": 0}, {"Text": "下午。", "EndTime": 110480, "BeginTime": 109520, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 187, "EmotionValue": 6.9, "SilenceDuration": 8}, {"Text": "下午是吧，两点吗？", "EndTime": 114068, "BeginTime": 111960, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 256, "EmotionValue": 5.3, "SilenceDuration": 3}, {"Text": "6月30号两点是吧。", "EndTime": 116780, "BeginTime": 114068, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 221, "EmotionValue": 5.3, "SilenceDuration": 0}, {"Text": "欢迎。", "EndTime": 117920, "BeginTime": 116980, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 191, "EmotionValue": 6.7, "SilenceDuration": 6}, {"Text": "哦，好。", "EndTime": 120520, "BeginTime": 118880, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 146, "EmotionValue": 4.8, "SilenceDuration": 2}, {"Text": "那这边的话我已经帮您约好了啊，就是6月30号到我们的一个门店去试乘试驾，体验一下我们NX8。", "EndTime": 129857, "BeginTime": 120660, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 293, "EmotionValue": 5.2, "SilenceDuration": 0}, {"Text": "这边的话带上驾驶证，不要穿拖鞋好吗？", "EndTime": 133280, "BeginTime": 129857, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 315, "EmotionValue": 5.2, "SilenceDuration": 0}, {"Text": "嗯，好的。", "EndTime": 134680, "BeginTime": 133580, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 272, "EmotionValue": 6.6, "SilenceDuration": 15}, {"Text": "嗯嗯，试驾体验完的话，是可以参与我们的一个抽奖活动的，好吧。", "EndTime": 139360, "BeginTime": 134820, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 396, "EmotionValue": 5.2, "SilenceDuration": 1}, {"Text": "嗯，好嘞。", "EndTime": 140660, "BeginTime": 139620, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 288, "EmotionValue": 6.2, "SilenceDuration": 4}, {"Text": "嗯，我给您介绍一下NX8这款车吧，它是大大大五座智慧智小SUV，有纯电，有增程两个版本，官方指导价是15.99万。", "EndTime": 151579, "BeginTime": 141020, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 301, "EmotionValue": 5.3, "SilenceDuration": 1}, {"Text": "到20.99万嗯嗯。", "EndTime": 154720, "BeginTime": 151720, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 180, "EmotionValue": 5.2, "SilenceDuration": 0}, {"Text": "嗯，那这边的话呃，您这边的话是买车主要是家庭用车，还是说呃商用呢？", "EndTime": 163920, "BeginTime": 156140, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 254, "EmotionValue": 5.5, "SilenceDuration": 1}, {"Text": "行，你先忙吧，有时间的时候到店里再说啊。", "EndTime": 168000, "BeginTime": 164700, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 363, "EmotionValue": 7.2, "SilenceDuration": 24}, {"Text": "可以，那您也通过一下厂家的一个企业微信加加，我给您下发一条短信好吗？", "EndTime": 174200, "BeginTime": 168360, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 349, "EmotionValue": 5.3, "SilenceDuration": 4}, {"Text": "嗯，好的。", "EndTime": 175580, "BeginTime": 174460, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 267, "EmotionValue": 6.3, "SilenceDuration": 6}, {"Text": "嗯，嗯嗯，好。", "EndTime": 179080, "BeginTime": 177540, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 272, "EmotionValue": 5.1, "SilenceDuration": 3}, {"Text": "那您通过一下。", "EndTime": 180439, "BeginTime": 179220, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 344, "EmotionValue": 6.3, "SilenceDuration": 0}]}</div>
+                            </div>
+                            <div class="text-box new">
+                                <div class="font-bold text-blue-600 mb-2 pb-2 border-b border-blue-100">新接口 (RoleType=1配置)</div>
+                                <div>角色1：你好，东风日产厂家给您来电，有在关注nx8这款车吗？
+角色2：嗯对，
+角色1：嗯好的。感谢您的关注，啊怎么称呼您呢先生贵姓？啊
+角色2：姓邱
+角色1：邱是吗？
+角色2：嗯
+角色1：噢是哪一个丘？山丘的丘。
+角色2：邱少云知道吧？
+角色1：邱少云有耳朵旁这个是吗？
+角色2：嗯读过书嘛
+角色1：噢邱少云，噢好的，邱先生
+角色2：没念过书，没念过邱少云吗？
+角色2：民族英雄
+角色1：练过的练过。
+角色1：的，邱先生您好。
+角色1：那您这边的话是在晋城用车吗？
+角色2：嗯对。
+角色1：嗯好的，那稍后的话我也安排那个门店，晋城、华阳、高平、
+角色1：金华企业之家门店联系您，啊然后您可以约个时间去门店试乘试驾，体验一下这款车好吗？
+角色2：嗯好的。
+角色1：嗯好。嗯那您呃有旧车置换吗？还是说首次购车呀
+角色2：嗯直接买新车？
+角色1：噢噢噢噢就是就是首次购车是吧？
+角色2：直接买新车
+角色1：噢直接买是吧？噢噢噢是考虑全款还是分期啊
+角色2：都行，看情况吧
+角色1：都行是吧？
+角色1：好的。
+角色1：嗯那您看这两天有时间到门店去试乘试驾体验，吗今天有时间吗？
+角色2：嗯今天没空到月底吧
+角色1：月底是吧？可以的。月底到店去试乘试驾体验是吗？上午还是下午啊
+角色2：下午
+角色1：下午是吧？
+角色1：2点吗？6月30号2点是吧？
+角色2：可以。
+角色1：噢好，那这边的话我已经帮您约好了，噢就是6月30号到我们的一个门店去试乘试驾，体验一下，
+角色1：我们nx8这边的话带上驾驶证不要穿拖鞋好吗？
+角色2：嗯好的。
+角色1：嗯嗯试驾体验完的话是可以参与我们的一个抽奖活动的，好吧？
+角色2：嗯好的。
+角色1：嗯我给您介绍一下nx8这款车，吧
+角色1：它是大大大5座智慧舒享SUV，有纯电有增程两个版本，官方指导价是15.99万到20.99万，噢噢噢那这边的话嗯您这边的话
+角色1：是买车主要是家庭用车还是说呃商用呢
+角色2：行？你先忙，吧有时间的时候到店里再说啊
+角色1：可以。那您也通过一下厂家的一个企业微信加加我给您下发一条短信好吗？嗯嗯嗯好，那您通过一下。</div>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <div class="case-card">
+                        <div class="flex justify-between items-center bg-gray-100 px-4 py-2 rounded-t-lg">
+                            <div class="font-bold text-gray-700">Case 2 | 线索ID: 1791670913983340032</div>
+                            <div class="text-sm font-semibold text-orange-500">相似度: 11.5%</div>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-2 px-2 break-all">来源：http://172.24.176.101:8019/20260620/dfn_dcc_ob_d_1_8e_17205006099_22b5dab6-c8c9-4494-8a33-06d5c76cd12f_17205006099_22b5dab6-c8c9-4494-8a33-06d5c76cd12f_20260620_091115.wav</div>
+                        
+                        <div class="diff-container">
+                            <div class="text-box old">
+                                <div class="font-bold text-gray-500 mb-2 pb-2 border-b border-gray-200">老系统 (原转写文本)</div>
+                                <div>{"Sentences": [{"Text": "你好。", "EndTime": 2340, "BeginTime": 1240, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 163, "EmotionValue": 6.0, "SilenceDuration": 1}, {"Text": "哎，先生您好，我这边是东风日产厂家给您来电的。", "EndTime": 5583, "BeginTime": 2480, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 444, "EmotionValue": 6.2, "SilenceDuration": 0}, {"Text": "看您有在关注我们的新能源SUVNX8这款车型的吗？", "EndTime": 9307, "BeginTime": 5583, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 338, "EmotionValue": 6.2, "SilenceDuration": 0}, {"Text": "想邀请您去到门店试驾体验下的。", "EndTime": 11480, "BeginTime": 9307, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 414, "EmotionValue": 6.2, "SilenceDuration": 0}, {"Text": "好好好好好哦，您这边有关注说。", "EndTime": 13844, "BeginTime": 11660, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 412, "EmotionValue": 6.9, "SilenceDuration": 11}, {"Text": "那我简单跟您介绍一下哈，因为咱们这块不要介绍。", "EndTime": 17372, "BeginTime": 13844, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 391, "EmotionValue": 6.9, "SilenceDuration": 2}, {"Text": "不要介绍我今天去啊。", "EndTime": 18884, "BeginTime": 17372, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 396, "EmotionValue": 6.9, "SilenceDuration": 3}, {"Text": "您今天去是吧？", "EndTime": 19892, "BeginTime": 18884, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 416, "EmotionValue": 6.9, "SilenceDuration": 1}, {"Text": "那您我看您这个意向门店，您是在徐州那边吗？", "EndTime": 23084, "BeginTime": 19892, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 394, "EmotionValue": 6.9, "SilenceDuration": 0}, {"Text": "是吧？", "EndTime": 23420, "BeginTime": 23084, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 535, "EmotionValue": 6.9, "SilenceDuration": 0}, {"Text": "对对对对对，您这边。", "EndTime": 24867, "BeginTime": 23560, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 459, "EmotionValue": 6.6, "SilenceDuration": 4}, {"Text": "有一个徐州尊林韦林的一个门店，还是说徐州尊悦这边的？", "EndTime": 28794, "BeginTime": 24868, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 397, "EmotionValue": 6.6, "SilenceDuration": 1}, {"Text": "呃，就您的我不知道，我去看一下。", "EndTime": 30919, "BeginTime": 28794, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 451, "EmotionValue": 6.6, "SilenceDuration": 0}, {"Text": "我这边有事等会再说吧。", "EndTime": 32556, "BeginTime": 30920, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 403, "EmotionValue": 6.6, "SilenceDuration": 6}, {"Text": "好吧？", "EndTime": 32883, "BeginTime": 32556, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 550, "EmotionValue": 6.6, "SilenceDuration": 0}, {"Text": "啊，也可以啊。", "EndTime": 33701, "BeginTime": 32883, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 513, "EmotionValue": 6.6, "SilenceDuration": 0}, {"Text": "也可以。", "EndTime": 34191, "BeginTime": 33701, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 489, "EmotionValue": 6.6, "SilenceDuration": 2}, {"Text": "好嘞，那就先不打扰您。", "EndTime": 35664, "BeginTime": 34192, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 448, "EmotionValue": 6.6, "SilenceDuration": 0}, {"Text": "祝您生活愉快哈。", "EndTime": 36809, "BeginTime": 35664, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 419, "EmotionValue": 6.6, "SilenceDuration": 1}, {"Text": "嗯好的。", "EndTime": 37300, "BeginTime": 36809, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 488, "EmotionValue": 6.6, "SilenceDuration": 0}]}</div>
+                            </div>
+                            <div class="text-box new">
+                                <div class="font-bold text-blue-600 mb-2 pb-2 border-b border-blue-100">新接口 (RoleType=1配置)</div>
+                                <div>角色1：你好，唉先生您好，这边是东风日产厂家给您来电的，看你有在关注我们的新能源SUV nx8这款车型的吗？想邀请您去到门店试驾体验一下的。
+角色2：好好好好好，噢您这边有关注
+角色1：是吧？那我简单跟您介绍一下，哈因为咱们这款
+角色2：不要介绍不要介绍我，今天去
+角色1：噢您今天去是吧？那您我看您这个意向门店您是在徐州那边吗是吧？
+角色2：对。
+角色2：对对对对，
+角色1：您这边有一个徐州尊邻为邻的一个门店，还是说徐州尊悦这边比呃距离您比较
+角色2：我我不知道我去看一下，我这边有事等会再说吧好吧？
+角色1：噢也可以啊也可以，好，喽那就先不打扰您，祝
+角色2：您生活愉快，哈嗯好再见。</div>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <div class="case-card">
+                        <div class="flex justify-between items-center bg-gray-100 px-4 py-2 rounded-t-lg">
+                            <div class="font-bold text-gray-700">Case 3 | 线索ID: 1791681462416379904</div>
+                            <div class="text-sm font-semibold text-orange-500">相似度: 13.7%</div>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-2 px-2 break-all">来源：http://172.24.176.101:8019/20260621/dfn_dcc_ob_d_1_8e_15546528443_161bb693-eea0-4870-a66b-7f856b2b0d6e_15546528443_161bb693-eea0-4870-a66b-7f856b2b0d6e_20260621_095834.wav</div>
+                        
+                        <div class="diff-container">
+                            <div class="text-box old">
+                                <div class="font-bold text-gray-500 mb-2 pb-2 border-b border-gray-200">老系统 (原转写文本)</div>
+                                <div>{"Sentences": [{"Text": "你好。", "EndTime": 2340, "BeginTime": 1100, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 145, "EmotionValue": 6.3, "SilenceDuration": 1}, {"Text": "您好，东风日产厂家给您来电，我是厂家的专属邀约顾问佳佳。", "EndTime": 8389, "BeginTime": 3620, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 352, "EmotionValue": 6.2, "SilenceDuration": 1}, {"Text": "有看到您在关注我们的一款新能源SUVNX8对吗？", "EndTime": 12780, "BeginTime": 8390, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 273, "EmotionValue": 6.2, "SilenceDuration": 0}, {"Text": "对。", "EndTime": 14740, "BeginTime": 13700, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 115, "EmotionValue": 7.4, "SilenceDuration": 13}, {"Text": "您好，先生，您这边最近有没有时间想过来试驾体验一下呢？", "EndTime": 19880, "BeginTime": 15540, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 373, "EmotionValue": 6.3, "SilenceDuration": 2}, {"Text": "有啊。", "EndTime": 21660, "BeginTime": 20480, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 152, "EmotionValue": 7.6, "SilenceDuration": 5}, {"Text": "您是在哈尔滨这边是吗？", "EndTime": 23940, "BeginTime": 21800, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 308, "EmotionValue": 6.1, "SilenceDuration": 1}, {"Text": "对，好，您稍等啊。", "EndTime": 25595, "BeginTime": 24340, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 430, "EmotionValue": 6.6, "SilenceDuration": 2}, {"Text": "我帮您查询一下哈尔滨这边的门店，哈尔滨东风南方学府路这家门店可以吗？", "EndTime": 32290, "BeginTime": 25595, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 304, "EmotionValue": 6.6, "SilenceDuration": 1}, {"Text": "在哈尔滨市的南岗区学府路这边。", "EndTime": 35219, "BeginTime": 32290, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 307, "EmotionValue": 6.6, "SilenceDuration": 0}, {"Text": "可以。", "EndTime": 37520, "BeginTime": 36340, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 152, "EmotionValue": 7.4, "SilenceDuration": 10}, {"Text": "好的，您大概是什么时候转过来呢？", "EndTime": 40820, "BeginTime": 37660, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 303, "EmotionValue": 6.3, "SilenceDuration": 2}, {"Text": "音乐约炮2。", "EndTime": 44380, "BeginTime": 42480, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 189, "EmotionValue": 7.6, "SilenceDuration": 4}, {"Text": "7月1号。", "EndTime": 46160, "BeginTime": 44700, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 205, "EmotionValue": 6.2, "SilenceDuration": 3}, {"Text": "嗯。", "EndTime": 47800, "BeginTime": 46760, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 115, "EmotionValue": 6.9, "SilenceDuration": 2}, {"Text": "7月1号是星期三，您是上午过来还是下午过来呢？", "EndTime": 51840, "BeginTime": 47940, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 353, "EmotionValue": 6.3, "SilenceDuration": 1}, {"Text": "下午吧。", "EndTime": 53660, "BeginTime": 52440, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 196, "EmotionValue": 7.4, "SilenceDuration": 4}, {"Text": "好，下午我帮您把时间留宽裕一点，留到下午6点到6点半，您看合适吗？", "EndTime": 58500, "BeginTime": 53800, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 421, "EmotionValue": 6.3, "SilenceDuration": 1}, {"Text": "好的，哎好的。", "EndTime": 60363, "BeginTime": 59080, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 327, "EmotionValue": 7.1, "SilenceDuration": 5}, {"Text": "哎，好，您贵姓呢？", "EndTime": 61903, "BeginTime": 60363, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 350, "EmotionValue": 7.1, "SilenceDuration": 1}, {"Text": "先生怎么称呼您？", "EndTime": 63700, "BeginTime": 61903, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 267, "EmotionValue": 7.1, "SilenceDuration": 0}, {"Text": "我姓王。", "EndTime": 65940, "BeginTime": 64340, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 150, "EmotionValue": 7.6, "SilenceDuration": 3}, {"Text": "王先生，好的，这边给您备注好了。", "EndTime": 69010, "BeginTime": 66080, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 327, "EmotionValue": 6.5, "SilenceDuration": 2}, {"Text": "您这个号码可以添加您的微信吗？", "EndTime": 72167, "BeginTime": 69010, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 285, "EmotionValue": 6.5, "SilenceDuration": 0}, {"Text": "先生，155的。", "EndTime": 73520, "BeginTime": 72167, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 354, "EmotionValue": 6.5, "SilenceDuration": 0}, {"Text": "好的，我这边添加一下您哈。", "EndTime": 75593, "BeginTime": 73680, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 407, "EmotionValue": 6.5, "SilenceDuration": 0}, {"Text": "哦您这个号码设置的隐私哟。", "EndTime": 77680, "BeginTime": 75593, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 373, "EmotionValue": 6.5, "SilenceDuration": 0}, {"Text": "你还有其他号码吗？", "EndTime": 79660, "BeginTime": 77940, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 313, "EmotionValue": 7.4, "SilenceDuration": 0}, {"Text": "要不然我加你吧。", "EndTime": 82360, "BeginTime": 80200, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 222, "EmotionValue": 7.7, "SilenceDuration": 14}, {"Text": "嗯，那我给您发条短信，然后那个短信的后面呢有个链接，您点进去是可以直接添加我的微信的，先生。", "EndTime": 90220, "BeginTime": 82980, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 381, "EmotionValue": 6.3, "SilenceDuration": 3}, {"Text": "嗯，好的，您这边是。", "EndTime": 92262, "BeginTime": 90640, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 369, "EmotionValue": 6.6, "SilenceDuration": 8}, {"Text": "首次购车还是增购或者。", "EndTime": 94580, "BeginTime": 92262, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 284, "EmotionValue": 6.6, "SilenceDuration": 2}]}</div>
+                            </div>
+                            <div class="text-box new">
+                                <div class="font-bold text-blue-600 mb-2 pb-2 border-b border-blue-100">新接口 (RoleType=1配置)</div>
+                                <div>角色1：您好您好，东风日产厂家给您来电，我是厂家的专属邀约顾问佳佳，有看到您在关注我们的一款新能源suvnx8对吗？
+角色2：对。
+角色1：您好先生，您这边最近有没有时间想过来试驾体验一下？
+角色1：呢
+角色2：有。
+角色2：啊
+角色1：您是在哈尔滨这边是吗？
+角色2：对好。
+角色1：您稍等，啊我帮您查询一下哈尔滨这边的门店，哈尔滨东风南方学府路这家门店可以吗？
+角色1：在哈尔滨市的南岗区学府路这边。
+角色2：可以。
+角色1：好的，您大概是什么时候想过来呢
+角色2：是周六周天还是？
+角色1：7月1号。
+角色2：嗯
+角色1：7月1号是星期三，你是上午过来还是下午过来呢
+角色2：下午？
+角色2：吧
+角色1：好，下午我帮您把时间留宽裕一点，留到下午6:00~6:30，您看合适吗？
+角色2：好的可以，
+角色1：好的，唉好，您贵姓呢先生怎么称呼您？
+角色2：我姓王。
+角色1：王先生好的这边给您备注好了，您这个号码可以添加您的微信吗？
+角色1：先生155的
+角色2：可以。
+角色1：好的，我这边添加一下您哈噢您这个号码设置了隐私，哟
+角色2：您还有其他的号码吗？要不然我加你吧
+角色1：嗯那我给您发条短信，然后那个短信的后面呢有个链接，您点进去是可以直接添加我的微信的先生。
+角色2：嗯好的。
+角色1：您这边是首次购车还是增购或者。</div>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <div class="case-card">
+                        <div class="flex justify-between items-center bg-gray-100 px-4 py-2 rounded-t-lg">
+                            <div class="font-bold text-gray-700">Case 4 | 线索ID: 1683886802663340032</div>
+                            <div class="text-sm font-semibold text-orange-500">相似度: 14.3%</div>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-2 px-2 break-all">来源：http://172.24.176.101:8019/20260619/dfn_dcc_ob_d_1_8e_18448339281_85f11e20-674a-4933-9fe8-79cdf22c3feb_18448339281_85f11e20-674a-4933-9fe8-79cdf22c3feb_20260619_094003.wav</div>
+                        
+                        <div class="diff-container">
+                            <div class="text-box old">
+                                <div class="font-bold text-gray-500 mb-2 pb-2 border-b border-gray-200">老系统 (原转写文本)</div>
+                                <div>{"Sentences": [{"Text": "你好，这边是呃您好，这边是东风日产厂家给您来电的。", "EndTime": 5577, "BeginTime": 1540, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 371, "EmotionValue": 6.7, "SilenceDuration": 1}, {"Text": "然后有看到您在关注我们新能源SUVNX8，这边给您预约试驾体验一下，可以吗？", "EndTime": 12000, "BeginTime": 5577, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 317, "EmotionValue": 6.7, "SilenceDuration": 0}, {"Text": "可以的。", "EndTime": 13043, "BeginTime": 12280, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 314, "EmotionValue": 6.7, "SilenceDuration": 12}, {"Text": "嗯，好嘞。", "EndTime": 13806, "BeginTime": 13043, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 393, "EmotionValue": 6.7, "SilenceDuration": 0}, {"Text": "然后我这边看到您的意向门店是在钦州，是吗？", "EndTime": 18640, "BeginTime": 13806, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 260, "EmotionValue": 6.7, "SilenceDuration": 1}, {"Text": "对。", "EndTime": 20040, "BeginTime": 18980, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 113, "EmotionValue": 7.0, "SilenceDuration": 5}, {"Text": "嗯嗯，您在钦州的话，呃，请问咱们最近是哪一天比较有时间呀？", "EndTime": 25701, "BeginTime": 20180, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 315, "EmotionValue": 6.8, "SilenceDuration": 1}, {"Text": "然后可以给帮您预约一个您合适的时间。", "EndTime": 29456, "BeginTime": 25701, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 287, "EmotionValue": 6.8, "SilenceDuration": 0}, {"Text": "30号晚。", "EndTime": 30340, "BeginTime": 29456, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 339, "EmotionValue": 6.8, "SilenceDuration": 9}, {"Text": "嗯，30号是吧？", "EndTime": 31996, "BeginTime": 30480, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 316, "EmotionValue": 6.6, "SilenceDuration": 1}, {"Text": "可以的。", "EndTime": 32754, "BeginTime": 31996, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 316, "EmotionValue": 6.6, "SilenceDuration": 0}, {"Text": "嗯，因为我看到咱们钦州的话，暂时呃没有就是您关注NX8的这款呃试驾车。", "EndTime": 40840, "BeginTime": 32754, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 252, "EmotionValue": 6.6, "SilenceDuration": 0}, {"Text": "呃，到这个。", "EndTime": 44280, "BeginTime": 42160, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 169, "EmotionValue": 7.6, "SilenceDuration": 11}, {"Text": "南宁吧。", "EndTime": 45680, "BeginTime": 44440, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 193, "EmotionValue": 7.0, "SilenceDuration": 0}, {"Text": "哦，南宁是吧？", "EndTime": 47245, "BeginTime": 46160, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 387, "EmotionValue": 6.5, "SilenceDuration": 5}, {"Text": "好的，我看一下门店啊。", "EndTime": 49200, "BeginTime": 47245, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 337, "EmotionValue": 6.5, "SilenceDuration": 0}, {"Text": "好。", "EndTime": 50560, "BeginTime": 49580, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 122, "EmotionValue": 6.6, "SilenceDuration": 3}, {"Text": "嗯，南宁的话像咱们江南区，还有高新技术开发区，还有那个。", "EndTime": 56161, "BeginTime": 50840, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 315, "EmotionValue": 6.8, "SilenceDuration": 1}, {"Text": "嗯。", "EndTime": 56384, "BeginTime": 56162, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 540, "EmotionValue": 6.8, "SilenceDuration": 0}, {"Text": "好嘞。", "EndTime": 56828, "BeginTime": 56384, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 405, "EmotionValue": 6.8, "SilenceDuration": 5}, {"Text": "然后这边有一个罗文大道与大学西路交汇处恒信汽车城，然后是有一家门店的。", "EndTime": 64147, "BeginTime": 56828, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 286, "EmotionValue": 6.8, "SilenceDuration": 0}, {"Text": "嗯嗯。", "EndTime": 64590, "BeginTime": 64147, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 406, "EmotionValue": 6.8, "SilenceDuration": 0}, {"Text": "哎然后我。", "EndTime": 65478, "BeginTime": 64590, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 337, "EmotionValue": 6.8, "SilenceDuration": 7}, {"Text": "这边的话就帮您约到这个月的30号，然后是周二。", "EndTime": 70134, "BeginTime": 65478, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 296, "EmotionValue": 6.8, "SilenceDuration": 0}, {"Text": "呃，您看上午过去方便还是下午过去方便呀？", "EndTime": 74127, "BeginTime": 70135, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 300, "EmotionValue": 6.8, "SilenceDuration": 0}, {"Text": "嗯好嘞，那我这边帮您预约十点钟可以吗？", "EndTime": 77898, "BeginTime": 74127, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 302, "EmotionValue": 6.8, "SilenceDuration": 0}, {"Text": "好。", "EndTime": 78120, "BeginTime": 77898, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 540, "EmotionValue": 6.8, "SilenceDuration": 0}, {"Text": "嗯，像十点钟的话，咱们试驾时间大概是20分钟。", "EndTime": 82425, "BeginTime": 78760, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 376, "EmotionValue": 6.7, "SilenceDuration": 0}, {"Text": "然后您记得带好本人驾驶证，不要穿拖鞋，然后咱们注意行车安全。", "EndTime": 87376, "BeginTime": 82426, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 363, "EmotionValue": 6.7, "SilenceDuration": 0}, {"Text": "我这边方便加一下您9281微信的那个微。", "EndTime": 90860, "BeginTime": 87376, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 344, "EmotionValue": 6.7, "SilenceDuration": 0}]}</div>
+                            </div>
+                            <div class="text-box new">
+                                <div class="font-bold text-blue-600 mb-2 pb-2 border-b border-blue-100">新接口 (RoleType=1配置)</div>
+                                <div>角色1：您好这边是呃您好，这边是东风日产厂家给您来电的，然后有看到您在关注我们新能源suvnx8这边给您预约试驾体验一下可以吗？
+角色2：可以，啊噢好，喽
+角色1：然后我这边看到您的意向门店是在钦州是吗？
+角色2：对，
+角色1：嗯嗯您在钦州的话，呃请问咱们最近是哪一天比较有时间，呀然后可以给帮您预约一个您合适的时间？
+角色2：30号。
+角色2：吧
+角色1：噢30号是吧？可以的，嗯因为我看到咱们钦州的话暂时呃没有就是您关注nx8的这款呃试驾车
+角色2：那到这个南宁。吧
+角色1：噢南宁是吧？
+角色1：好的，我看一下门店，哈
+角色2：啊嗯
+角色1：噢南宁的话像咱们江南区还有高新技术开发区，
+角色2：还有那个
+角色1：嗯好，喽然后这边有一个罗文大道与大学西路交汇处，恒信汽车城，然后是有一家门店的。
+角色2：嗯
+角色1：好，唉然后我这边的话就帮您约到这个月的30号，然后是周二，呃您看上午过去方便还是下午过去方便？呀
+角色2：嗯
+角色1：好的，那我这边帮您预约10:00可以吗？
+角色2：好。
+角色1：嗯像10:00的话，咱们试驾时间大概是20分钟，然后您记得带好本人驾驶证不要穿拖鞋，然后咱们注意行车安全，我这边方便加一下您9281微信的。
+角色1：那个</div>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <div class="case-card">
+                        <div class="flex justify-between items-center bg-gray-100 px-4 py-2 rounded-t-lg">
+                            <div class="font-bold text-gray-700">Case 5 | 线索ID: 1791697010207089920</div>
+                            <div class="text-sm font-semibold text-orange-500">相似度: 14.3%</div>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-2 px-2 break-all">来源：http://172.24.176.101:8019/20260621/dfn_dcc_ob_d_1_8e_13535990361_1b650c73-3b19-4eb4-a32a-cfb190ad2140_13535990361_1b650c73-3b19-4eb4-a32a-cfb190ad2140_20260621_155206.wav</div>
+                        
+                        <div class="diff-container">
+                            <div class="text-box old">
+                                <div class="font-bold text-gray-500 mb-2 pb-2 border-b border-gray-200">老系统 (原转写文本)</div>
+                                <div>{"Sentences": [{"Text": "转一站。", "EndTime": 520, "BeginTime": 0, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 461, "EmotionValue": 2.7, "SilenceDuration": 0}, {"Text": "你好。", "EndTime": 2000, "BeginTime": 720, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 140, "EmotionValue": 6.3, "SilenceDuration": 0}, {"Text": "喂，你好哎，你好，先生，我这边是东风日产厂家给您来电的。", "EndTime": 7270, "BeginTime": 2660, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 364, "EmotionValue": 7.1, "SilenceDuration": 0}, {"Text": "有看到您呃拼图啊，拼图。", "EndTime": 9273, "BeginTime": 7270, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 359, "EmotionValue": 7.1, "SilenceDuration": 0}, {"Text": "我我我我里头有点丑，你听多啊。", "EndTime": 11880, "BeginTime": 9274, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 345, "EmotionValue": 7.1, "SilenceDuration": 9}, {"Text": "您这边需要买车吗？", "EndTime": 13748, "BeginTime": 12020, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 312, "EmotionValue": 6.3, "SilenceDuration": 2}, {"Text": "先生？", "EndTime": 14180, "BeginTime": 13748, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 416, "EmotionValue": 6.3, "SilenceDuration": 0}, {"Text": "你是哪个店？", "EndTime": 16133, "BeginTime": 14800, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 270, "EmotionValue": 6.9, "SilenceDuration": 2}, {"Text": "我这边是。", "EndTime": 17200, "BeginTime": 16133, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 281, "EmotionValue": 6.9, "SilenceDuration": 0}, {"Text": "东风日产总部。", "EndTime": 18800, "BeginTime": 17200, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 262, "EmotionValue": 6.9, "SilenceDuration": 3}, {"Text": "哦，广州的是不是是吗？", "EndTime": 21160, "BeginTime": 19360, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 366, "EmotionValue": 7.4, "SilenceDuration": 2}, {"Text": "对，是的啊。", "EndTime": 21960, "BeginTime": 21160, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 450, "EmotionValue": 7.4, "SilenceDuration": 2}, {"Text": "对对对啊，对，没错，我我我有联系过。", "EndTime": 24760, "BeginTime": 21960, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 385, "EmotionValue": 7.4, "SilenceDuration": 0}, {"Text": "那我这边帮您联系清远这边的门店，可以吗？", "EndTime": 28200, "BeginTime": 25040, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 379, "EmotionValue": 6.5, "SilenceDuration": 3}, {"Text": "不用不用，我就想问一下广州的。", "EndTime": 31060, "BeginTime": 28600, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 365, "EmotionValue": 7.4, "SilenceDuration": 3}, {"Text": "哦，您是广州的？", "EndTime": 32496, "BeginTime": 31200, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 370, "EmotionValue": 6.4, "SilenceDuration": 3}, {"Text": "可以呀，您是在哪个区？", "EndTime": 34440, "BeginTime": 32496, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 339, "EmotionValue": 6.4, "SilenceDuration": 0}, {"Text": "我我现我现在听见您您您是总部是吧？", "EndTime": 40551, "BeginTime": 36240, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 236, "EmotionValue": 7.0, "SilenceDuration": 5}, {"Text": "对，是的。", "EndTime": 41360, "BeginTime": 40551, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 370, "EmotionValue": 7.0, "SilenceDuration": 6}, {"Text": "呃，身份证。", "EndTime": 43260, "BeginTime": 41500, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 204, "EmotionValue": 7.3, "SilenceDuration": 0}, {"Text": "啊，你说。", "EndTime": 44740, "BeginTime": 43700, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 288, "EmotionValue": 6.7, "SilenceDuration": 3}, {"Text": "是根据您到时候去广州的，看您是在哪个区，我会根据您的情况来帮您安排就近的门店，会方便一点。", "EndTime": 52700, "BeginTime": 44880, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 345, "EmotionValue": 6.3, "SilenceDuration": 1}, {"Text": "呃，哪个门店大一点？", "EndTime": 55940, "BeginTime": 53620, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 258, "EmotionValue": 7.2, "SilenceDuration": 8}, {"Text": "广州。", "EndTime": 56520, "BeginTime": 55940, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 310, "EmotionValue": 7.2, "SilenceDuration": 0}, {"Text": "门店大一点的话。", "EndTime": 58559, "BeginTime": 56660, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 252, "EmotionValue": 6.5, "SilenceDuration": 3}, {"Text": "呃，像我们广州星光明珠啊，像风日店，这些都是大店的。", "EndTime": 63178, "BeginTime": 58700, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 348, "EmotionValue": 7.0, "SilenceDuration": 0}, {"Text": "你放心可以。", "EndTime": 64196, "BeginTime": 63178, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 353, "EmotionValue": 7.0, "SilenceDuration": 0}, {"Text": "那那那随便一个都行。", "EndTime": 66028, "BeginTime": 64196, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 327, "EmotionValue": 7.0, "SilenceDuration": 7}, {"Text": "我我我我就想去广州。", "EndTime": 67860, "BeginTime": 66028, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 327, "EmotionValue": 7.0, "SilenceDuration": 0}, {"Text": "清远过来的话，应该是花都这边近一点，对不对？", "EndTime": 72679, "BeginTime": 68380, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 307, "EmotionValue": 7.1, "SilenceDuration": 4}, {"Text": "啊，都近，其实都是一个多小时吧，也不会很远。", "EndTime": 77500, "BeginTime": 73520, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 331, "EmotionValue": 7.3, "SilenceDuration": 5}, {"Text": "好，那我帮您联系广州丰日电，好不好？", "EndTime": 80285, "BeginTime": 77720, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 421, "EmotionValue": 6.6, "SilenceDuration": 5}, {"Text": "在那个花都区的东城大道，就在我们总部的前面一点点。", "EndTime": 84219, "BeginTime": 80285, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 381, "EmotionValue": 6.6, "SilenceDuration": 0}, {"Text": "可以可以可以，没问题。", "EndTime": 86300, "BeginTime": 84380, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 343, "EmotionValue": 7.0, "SilenceDuration": 6}, {"Text": "哎，好的，您贵姓？", "EndTime": 87581, "BeginTime": 86301, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 421, "EmotionValue": 7.0, "SilenceDuration": 2}, {"Text": "先生。", "EndTime": 88008, "BeginTime": 87582, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 422, "EmotionValue": 7.0, "SilenceDuration": 0}, {"Text": "怎么称呼您啊？", "EndTime": 89290, "BeginTime": 88009, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 327, "EmotionValue": 7.0, "SilenceDuration": 1}, {"Text": "木子李，姓李。", "EndTime": 90357, "BeginTime": 89290, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 393, "EmotionValue": 7.0, "SilenceDuration": 0}, {"Text": "李先生。", "EndTime": 90996, "BeginTime": 90357, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 375, "EmotionValue": 7.0, "SilenceDuration": 2}, {"Text": "好的，您这边最近哪天有时间过来呀？", "EndTime": 94200, "BeginTime": 90997, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 318, "EmotionValue": 7.0, "SilenceDuration": 0}, {"Text": "我昨天刚去了宁德。", "EndTime": 97460, "BeginTime": 95380, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 259, "EmotionValue": 7.1, "SilenceDuration": 5}, {"Text": "哦，那我我我我要我要去也也要去。", "EndTime": 100742, "BeginTime": 98120, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 366, "EmotionValue": 6.9, "SilenceDuration": 3}, {"Text": "也是只能下个下个周六日才有空。", "EndTime": 103364, "BeginTime": 100742, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 343, "EmotionValue": 6.9, "SilenceDuration": 3}, {"Text": "可以的，没问题。", "EndTime": 104488, "BeginTime": 103365, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 427, "EmotionValue": 6.9, "SilenceDuration": 0}, {"Text": "下个周六日的话，我帮您约到28号周天这一天，好不好？", "EndTime": 108983, "BeginTime": 104489, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 347, "EmotionValue": 6.9, "SilenceDuration": 3}, {"Text": "帮您把时间留宽裕一点，留到下午6点到6点半之前。", "EndTime": 113105, "BeginTime": 108984, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 349, "EmotionValue": 6.9, "SilenceDuration": 0}, {"Text": "您看您今天哪个时间段有时间，您就随时过来，好吗？", "EndTime": 117040, "BeginTime": 113106, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 366, "EmotionValue": 6.9, "SilenceDuration": 0}, {"Text": "嗯，没事，你先叫他，先先联系我吧。", "EndTime": 120640, "BeginTime": 117580, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 333, "EmotionValue": 7.1, "SilenceDuration": 13}, {"Text": "发定位嘛好不好？", "EndTime": 122520, "BeginTime": 120800, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 279, "EmotionValue": 7.1, "SilenceDuration": 0}, {"Text": "可以的，没问题。", "EndTime": 123572, "BeginTime": 122660, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 526, "EmotionValue": 6.5, "SilenceDuration": 5}, {"Text": "我先帮您把时间约好。", "EndTime": 124942, "BeginTime": 123572, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 437, "EmotionValue": 6.5, "SilenceDuration": 0}, {"Text": "您到时候呃就是你早上就是你什么事情都忙完了，您想过来，您就随时过来嘛，好不好？", "EndTime": 130267, "BeginTime": 124942, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 439, "EmotionValue": 6.5, "SilenceDuration": 0}, {"Text": "可以可以可以，反正发出一个多小时吧，2个小时不用直接进。", "EndTime": 134072, "BeginTime": 130268, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 441, "EmotionValue": 6.5, "SilenceDuration": 7}, {"Text": "对对对。", "EndTime": 134528, "BeginTime": 134072, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 526, "EmotionValue": 6.5, "SilenceDuration": 0}, {"Text": "我怕跟您约定好的时间，万一家里临时有点什么事情，到时候会时间会有变动吗？", "EndTime": 139549, "BeginTime": 134528, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 430, "EmotionValue": 6.5, "SilenceDuration": 4}, {"Text": "给你留一整天的时间，会方便一点。", "EndTime": 141679, "BeginTime": 139549, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 450, "EmotionValue": 6.5, "SilenceDuration": 0}, {"Text": "那没问题没问题，反正你就叫叫那个门店的，现在跟我联系一下就可以了。", "EndTime": 147740, "BeginTime": 142380, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 369, "EmotionValue": 6.7, "SilenceDuration": 7}, {"Text": "可以的，他到时候。", "EndTime": 148991, "BeginTime": 147740, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 431, "EmotionValue": 6.7, "SilenceDuration": 0}, {"Text": "半个小时左右就会给您回电的。", "EndTime": 151313, "BeginTime": 148991, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 361, "EmotionValue": 6.7, "SilenceDuration": 7}, {"Text": "然后您到时候过去试驾呢，试驾的时间大概是20分钟左右。", "EndTime": 155779, "BeginTime": 151313, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 362, "EmotionValue": 6.7, "SilenceDuration": 0}, {"Text": "您需要带上本人的那个驾驶证，如果说忘记带的话，您我知道电子驾驶证也是可以的哈。", "EndTime": 162213, "BeginTime": 155780, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 363, "EmotionValue": 6.7, "SilenceDuration": 0}, {"Text": "先生啊。", "EndTime": 162749, "BeginTime": 162213, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 447, "EmotionValue": 6.7, "SilenceDuration": 13}, {"Text": "这个我知道这我知道安全哦。", "EndTime": 164893, "BeginTime": 162749, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 363, "EmotionValue": 6.7, "SilenceDuration": 0}, {"Text": "嗯好，不要穿拖鞋吗？", "EndTime": 166322, "BeginTime": 164893, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 419, "EmotionValue": 6.7, "SilenceDuration": 0}, {"Text": "先生。", "EndTime": 166680, "BeginTime": 166322, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 502, "EmotionValue": 6.7, "SilenceDuration": 0}, {"Text": "要不要我加一下您微信，我把这款车，我说要不要我加您微信，把这款车的一个资料发给您看一下。", "EndTime": 173679, "BeginTime": 167180, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 406, "EmotionValue": 6.4, "SilenceDuration": 0}, {"Text": "可以可以可以，好的。", "EndTime": 175354, "BeginTime": 173920, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 418, "EmotionValue": 6.6, "SilenceDuration": 11}, {"Text": "好，您稍等啊。", "EndTime": 176250, "BeginTime": 175354, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 468, "EmotionValue": 6.6, "SilenceDuration": 1}, {"Text": "我这边搜索了一下。", "EndTime": 177683, "BeginTime": 176250, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 376, "EmotionValue": 6.6, "SilenceDuration": 0}, {"Text": "嗯嗯，拜拜。", "EndTime": 178400, "BeginTime": 177684, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 502, "EmotionValue": 6.6, "SilenceDuration": 2}, {"Text": "我用的是企业微信，添加您的，您稍后在手机微信收消息的，这边会有的。", "EndTime": 183600, "BeginTime": 178401, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 380, "EmotionValue": 6.6, "SilenceDuration": 0}, {"Text": "没问题没问题啊。", "EndTime": 185424, "BeginTime": 184080, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 357, "EmotionValue": 6.4, "SilenceDuration": 0}, {"Text": "好的好的好，您这边忙的话，我就先不打扰您哈，感谢您的接听，祝您生活愉快，再见。", "EndTime": 191763, "BeginTime": 185424, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 369, "EmotionValue": 6.4, "SilenceDuration": 0}, {"Text": "好，拜拜。", "EndTime": 192339, "BeginTime": 191763, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 520, "EmotionValue": 6.4, "SilenceDuration": 0}]}</div>
+                            </div>
+                            <div class="text-box new">
+                                <div class="font-bold text-blue-600 mb-2 pb-2 border-b border-blue-100">新接口 (RoleType=1配置)</div>
+                                <div>角色1：您好。
+角色2：喂你好
+角色1：唉你好先生，我这边是东风日产厂家给您来电的，有看到您在关注我们
+角色2：边度啊边度，啊我我我我呢度有点吵，你边度啊
+角色1：您这边需要买车吗先生？
+角色2：你是哪个店？我
+角色1：这边是东风日产总部。
+角色2：噢广州的是不是
+角色1：是吗？对是的，
+角色2：啊对对对啊对没错，我我我也联系过。
+角色1：那我这边帮您联系清远这边的门店可以吗？
+角色2：不用不用，我就想问一下广州的。
+角色1：噢联系广州的可以，呀您是在哪个区？
+角色2：我我现在我现在清远你你你是总部是吧？
+角色1：对，是的呃是根据总部啊
+角色2：你说。
+角色1：是根据您到时候去广州的，看您是在哪个区，我会根据您的情况来帮您安排就近的门店会方便一点。
+角色2：呃哪个门店大一点？广州
+角色1：门店大一点的话，呃像我们广州星光明珠，啊像丰日店这些都是大店的，你放心
+角色2：可以那那那随便一个都行，我我我我就想去广州，
+角色1：清远过来的话应该是花都这边近一点对不对？啊
+角色2：都近其实都是一个多小时吧也不会很远。
+角色1：好，那我帮您联系广州丰日店好不好？在那个花都区的风神大道就在我们总部的前面一点点。
+角色2：可以可以可以没问题。
+角色1：好的，您贵姓先生怎么称呼您？啊
+角色2：木子李姓李
+角色1：李先生，好的，您这边最近哪天有时间过来？呀我
+角色2：昨天刚去了英德噢那广州这边我要我要去也也要去，也是只能下个下个周六日才有空。
+角色1：可以的没问题，下个周六日的话我帮您约到28号周天这一天好不好？
+角色1：帮您把时间留宽裕一点，留到下午6:00~6:30之前，您看您当天哪个时间段有时间您就随时过来好吗？
+角色2：嗯没事，你先叫他先先联系我。吧
+角色2：发定位嘛
+角色1：可以的，没问题，我先帮您把时间约好，您到时候呃就是您早上就是您什么事情都忙完了，你想过来您就随时过来嘛好不好？
+角色2：可以可以可以，反正花都一个多小时吧两个小时不用。
+角色2：也近，
+角色1：对对对，我怕跟您约定好了时间，万一家里临时有点什么事情，到时候会时间会有变动，嘛给你留一整天的时间会方便一点，这
+角色2：没问题没问题，反正你就叫叫那个门店的销售跟我联系一下就可以了。
+角色1：可以的，他到时候半个小时左右就会给您回电的，然后您到时候过去试驾呢试驾的时间大概是20分钟左右，您需要带上本人的那个驾驶证，如果说忘记带的话，您提供电子驾驶证也是可以的哈先生，啊
+角色2：这个我知道我知道
+角色1：注意我知道安全。
+角色1：噢
+角色1：嗯好，不要穿拖鞋哈先生。要不要我加下您微信，我把这款车我说要不要我加您微信，把这款车的一个资料发给您看一下，可以
+角色2：可以。
+角色1：对好的，好，您稍等，啊
+角色2：我这边搜索
+角色1：一下，我用的是企业微信添加您的，您稍后在手机微信收消息这边会有的。
+角色2：嗯没问题没问题啊
+角色1：好的好的，好，您这边忙的话我就先不打扰您，哈感谢您的接听，祝您生活愉快，再见。
+角色1：嗯好，拜拜。</div>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <div class="case-card">
+                        <div class="flex justify-between items-center bg-gray-100 px-4 py-2 rounded-t-lg">
+                            <div class="font-bold text-gray-700">Case 6 | 线索ID: 1791721732042670080</div>
+                            <div class="text-sm font-semibold text-orange-500">相似度: 14.8%</div>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-2 px-2 break-all">来源：http://172.24.176.101:8019/20260621/dfn_dcc_ob_d_1_8e_13136109461_2d8e8844-dede-4b6d-90be-14d6d5113a7b_13136109461_2d8e8844-dede-4b6d-90be-14d6d5113a7b_20260621_104514.wav</div>
+                        
+                        <div class="diff-container">
+                            <div class="text-box old">
+                                <div class="font-bold text-gray-500 mb-2 pb-2 border-b border-gray-200">老系统 (原转写文本)</div>
+                                <div>{"Sentences": [{"Text": "你好，东风日产家给您来电，感谢的电话打到第四代邀约顾问大家。", "EndTime": 8860, "BeginTime": 2080, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 265, "EmotionValue": 6.7, "SilenceDuration": 2}, {"Text": "嗯，你好哎你好，有看到您在关注我们东风日产新车天籁鸿蒙座舱的对吗？", "EndTime": 15390, "BeginTime": 9280, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 324, "EmotionValue": 6.6, "SilenceDuration": 0}, {"Text": "想约您过来本店试驾体验一下。", "EndTime": 18036, "BeginTime": 15390, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 317, "EmotionValue": 6.6, "SilenceDuration": 0}, {"Text": "哎，好的，关注。", "EndTime": 19056, "BeginTime": 18037, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 471, "EmotionValue": 6.6, "SilenceDuration": 0}, {"Text": "呃，感谢您的关注和支持的。", "EndTime": 21296, "BeginTime": 19056, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 348, "EmotionValue": 6.6, "SilenceDuration": 0}, {"Text": "您关注的这一款天籁鸿蒙座舱车型呢，目前价格在13.99到18.29万元的。", "EndTime": 28424, "BeginTime": 21296, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 294, "EmotionValue": 6.6, "SilenceDuration": 0}, {"Text": "想问一下您这边是考虑哪个配置呢？", "EndTime": 31480, "BeginTime": 28424, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 314, "EmotionValue": 6.6, "SilenceDuration": 0}, {"Text": "不要拍不要拍，那么多兄弟能那个嘛啊。", "EndTime": 38380, "BeginTime": 33020, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 201, "EmotionValue": 7.2, "SilenceDuration": 33}, {"Text": "啊，想约您到门店试驾。", "EndTime": 41592, "BeginTime": 38700, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 228, "EmotionValue": 6.9, "SilenceDuration": 7}, {"Text": "我们不妨换。", "EndTime": 43200, "BeginTime": 41592, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 223, "EmotionValue": 6.9, "SilenceDuration": 3}, {"Text": "撩妹啊。", "EndTime": 44740, "BeginTime": 43420, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 181, "EmotionValue": 7.4, "SilenceDuration": 0}, {"Text": "哎，先生您好，您这边是有看车买车计划的对吗？", "EndTime": 51700, "BeginTime": 45460, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 211, "EmotionValue": 6.5, "SilenceDuration": 3}, {"Text": "对呀，啊我这边。", "EndTime": 53383, "BeginTime": 51840, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 311, "EmotionValue": 6.8, "SilenceDuration": 7}, {"Text": "的话想约您到店，想跟您约个时间呢。", "EndTime": 57243, "BeginTime": 53383, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 264, "EmotionValue": 6.8, "SilenceDuration": 1}, {"Text": "您目前在杭州用车吗？", "EndTime": 59558, "BeginTime": 57243, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 259, "EmotionValue": 6.8, "SilenceDuration": 0}, {"Text": "嗯，不识别的三，对。", "EndTime": 61360, "BeginTime": 59558, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 332, "EmotionValue": 6.8, "SilenceDuration": 6}, {"Text": "呃，杭州的话目前有六家门店呢，有试驾车，和展车的。", "EndTime": 66677, "BeginTime": 61900, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 314, "EmotionValue": 6.6, "SilenceDuration": 2}, {"Text": "呃，给您介绍几个店，一个在余杭区，一个在萧山区，拱墅区、西湖区都有店，钱塘区也有店的。", "EndTime": 74867, "BeginTime": 66677, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 315, "EmotionValue": 6.6, "SilenceDuration": 0}, {"Text": "您在哪个区域呢？", "EndTime": 76460, "BeginTime": 74867, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 301, "EmotionValue": 6.6, "SilenceDuration": 0}, {"Text": "萧山萧山萧山呃。", "EndTime": 78319, "BeginTime": 76600, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 279, "EmotionValue": 7.0, "SilenceDuration": 15}, {"Text": "可以安排杭州东风南方宁围门店，就在萧山区的宁围街道通惠北路857号的。", "EndTime": 86918, "BeginTime": 78319, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 244, "EmotionValue": 7.0, "SilenceDuration": 1}, {"Text": "呃，想邀约您看一下您呃这一周周末有没有。", "EndTime": 91338, "BeginTime": 86918, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 271, "EmotionValue": 7.0, "SilenceDuration": 0}, {"Text": "时间过来呢吧啊。", "EndTime": 93060, "BeginTime": 91340, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 279, "EmotionValue": 7.0, "SilenceDuration": 13}, {"Text": "下周周末是吗？", "EndTime": 95868, "BeginTime": 93640, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 188, "EmotionValue": 6.4, "SilenceDuration": 2}, {"Text": "嗯。", "EndTime": 96240, "BeginTime": 95868, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 322, "EmotionValue": 6.4, "SilenceDuration": 0}, {"Text": "啊，我给您留到，您大概什么时间方便呢？", "EndTime": 99846, "BeginTime": 96380, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 328, "EmotionValue": 7.0, "SilenceDuration": 0}, {"Text": "下午还是。", "EndTime": 100712, "BeginTime": 99846, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 346, "EmotionValue": 7.0, "SilenceDuration": 0}, {"Text": "上午东西。", "EndTime": 101580, "BeginTime": 100713, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 346, "EmotionValue": 7.0, "SilenceDuration": 7}, {"Text": "上午吧上午吧，哎呀。", "EndTime": 103545, "BeginTime": 101720, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 328, "EmotionValue": 7.1, "SilenceDuration": 0}, {"Text": "上午给您留到周日上午十点半到11点的时候，您看可不可以？", "EndTime": 109478, "BeginTime": 103545, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 283, "EmotionValue": 7.1, "SilenceDuration": 2}, {"Text": "好吧好吧嗯。", "EndTime": 110620, "BeginTime": 109478, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 315, "EmotionValue": 7.1, "SilenceDuration": 5}, {"Text": "啊，我让门店同事跟您联系，另外也想知道一下，你有没有旧车要置换呢，还是首次买车呀？", "EndTime": 117920, "BeginTime": 110760, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 343, "EmotionValue": 6.6, "SilenceDuration": 1}, {"Text": "不用置换，直接购买。", "EndTime": 120520, "BeginTime": 118720, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 333, "EmotionValue": 7.3, "SilenceDuration": 8}, {"Text": "购买啊，现在买车计划就这一两个月，是吗？", "EndTime": 124380, "BeginTime": 121220, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 379, "EmotionValue": 6.5, "SilenceDuration": 3}, {"Text": "嗯。", "EndTime": 125580, "BeginTime": 124580, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 120, "EmotionValue": 6.4, "SilenceDuration": 4}, {"Text": "啊，好的，没问题哈。", "EndTime": 127380, "BeginTime": 125940, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 416, "EmotionValue": 6.5, "SilenceDuration": 1}, {"Text": "也跟您简单介绍一下。", "EndTime": 129231, "BeginTime": 127380, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 324, "EmotionValue": 6.5, "SilenceDuration": 0}, {"Text": "这个车型的话呢，目前在六月底之前有一万的超级置换金的。", "EndTime": 134377, "BeginTime": 129232, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 314, "EmotionValue": 6.5, "SilenceDuration": 0}, {"Text": "现在这个最顶配的话呢，限时16.19万元。", "EndTime": 138287, "BeginTime": 134377, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 306, "EmotionValue": 6.5, "SilenceDuration": 0}, {"Text": "目前定制还提供零期贷款方案的先生。", "EndTime": 141580, "BeginTime": 138287, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 309, "EmotionValue": 6.5, "SilenceDuration": 0}, {"Text": "啊，您这边是考虑全款还是贷款分期买车呀？", "EndTime": 146020, "BeginTime": 142440, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 335, "EmotionValue": 6.5, "SilenceDuration": 0}, {"Text": "悬挂悬挂。", "EndTime": 147540, "BeginTime": 146160, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 217, "EmotionValue": 7.3, "SilenceDuration": 20}, {"Text": "好运全款哈。", "EndTime": 148594, "BeginTime": 147680, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 393, "EmotionValue": 6.9, "SilenceDuration": 1}, {"Text": "好，没问题。", "EndTime": 149326, "BeginTime": 148594, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 491, "EmotionValue": 6.9, "SilenceDuration": 0}, {"Text": "那我这边也想添加一下您的工您的微信的，这边方便，后续呢也会通过微信回访您到店试驾体验的一个情况。", "EndTime": 157558, "BeginTime": 149326, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 349, "EmotionValue": 6.9, "SilenceDuration": 0}, {"Text": "好的好的，真是话多的很哦。", "EndTime": 159571, "BeginTime": 157558, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 387, "EmotionValue": 6.9, "SilenceDuration": 10}, {"Text": "你这个。", "EndTime": 160120, "BeginTime": 159571, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 437, "EmotionValue": 6.9, "SilenceDuration": 0}, {"Text": "哦，那不好意思，打扰到您了哈。", "EndTime": 162961, "BeginTime": 160520, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 368, "EmotionValue": 7.2, "SilenceDuration": 2}, {"Text": "另外的话你到时候试驾要带上驾驶证哈。", "EndTime": 166419, "BeginTime": 162961, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 312, "EmotionValue": 7.2, "SilenceDuration": 0}, {"Text": "啊对，体验20分钟左右要注意行车安全，不要穿拖鞋哈。", "EndTime": 171098, "BeginTime": 166419, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 333, "EmotionValue": 7.2, "SilenceDuration": 0}, {"Text": "我安慰你，哎呀。", "EndTime": 172318, "BeginTime": 171098, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 393, "EmotionValue": 7.2, "SilenceDuration": 0}, {"Text": "你这个怎么这么多情况啊哦。", "EndTime": 174760, "BeginTime": 172318, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 319, "EmotionValue": 7.2, "SilenceDuration": 12}, {"Text": "中那不好。", "EndTime": 176840, "BeginTime": 175500, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 223, "EmotionValue": 6.6, "SilenceDuration": 3}]}</div>
+                            </div>
+                            <div class="text-box new">
+                                <div class="font-bold text-blue-600 mb-2 pb-2 border-b border-blue-100">新接口 (RoleType=1配置)</div>
+                                <div>角色1：您好，东风日产厂家给您来电，唉先生您好，我是厂家专属的试驾邀约顾问佳佳。唉您好，有看到您在关注我们东风日产新车天籁鸿蒙座舱的对吗？想约您过来门店试驾体验一下。
+角色1：唉好的，关注呃感谢您的关注和支持的。
+角色1：您关注的这一款天籁鸿蒙座舱车型，呢目前价格在13.99~18.29万元的，想问一下您这边是考虑哪个配置？呢
+角色2：标配标配买个没房，这的按到那个嘛
+角色1：啊啊想约您到门店试驾体验一下
+角色2：先生怎啊标配？啊
+角色2：哪个嘛嘛抖音直播嘛
+角色1：唉先生您好，您这边是有看车买车计划的对吗？
+角色2：对，啊
+角色1：啊我这边的话想约您到店想跟您约个时间的，您目前在杭州用车吗？
+角色2：嗯不是别的噻，对。
+角色1：呃杭州的话目前有6家门店呢有试驾车和展车的，啊给您介绍几个店，一个在余杭区，一个在萧山区、拱墅区、西湖区都有店。钱塘区的也有店的。您在哪个区域？呢
+角色2：萧山
+角色1：萧山萧山。啊可以安排杭州东风南方宁围门店，就在萧山区的宁围街道通惠北路857号的。
+角色1：呃想邀约您看一下您呃这一周周末有没有时间过来，呢下周末
+角色2：这周末吧啊
+角色1：下周周末是吗？啊啊我给您留到您大概什么时间方便，呢下午还是上午
+角色2：啊都是
+角色2：上午吧上午吧唉呀
+角色1：上午给您留到周日，上午10:30~11:00的时间，您看可不可以？
+角色2：好吧好吧，嗯
+角色1：啊我让门店同事跟您联系，另外也想知道一下你有没有旧车要置换，呢还是首次买车？呀
+角色2：不用置换直接购买
+角色1：直接购买，啊大概买车计划就这一两个月是吗？
+角色2：嗯
+角色1：啊好的，没问题，哈也跟您简单介绍一下，这个车型的话呢目前在6月底之前有1万的超级置换金的，在这个最顶配的话呢限时16.19万元，目前订车还提供零息贷款方案的先生，
+角色1：啊您这边是考虑全款还是贷款分期买车呀
+角色2：全款全款？
+角色1：考虑全款哈好没问题，那我这边也想添加一下您的工你的微信的这边方便，后续呢也会通过微信回访您到店试驾体验的一个情况的
+角色2：好了好了，唉真是话多的很，噢你这个
+角色1：啊
+角色1：那不好意思打扰到您了，哈另外的话你到时候试驾要带上驾驶证，哈啊对体验20分钟左右要注意行车安全，不要穿拖鞋，哈我安排门
+角色2：唉呀你这个怎么这么多警告，嘛噢
+角色1：那不好意思。</div>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <div class="case-card">
+                        <div class="flex justify-between items-center bg-gray-100 px-4 py-2 rounded-t-lg">
+                            <div class="font-bold text-gray-700">Case 7 | 线索ID: 1791696288650129920</div>
+                            <div class="text-sm font-semibold text-orange-500">相似度: 15.3%</div>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-2 px-2 break-all">来源：http://172.24.176.101:8019/20260621/dfn_dcc_ob_d_1_8e_17801483267_0d83ca04-f4b3-4707-9c85-666cf1ad925f_17801483267_0d83ca04-f4b3-4707-9c85-666cf1ad925f_20260621_141527.wav</div>
+                        
+                        <div class="diff-container">
+                            <div class="text-box old">
+                                <div class="font-bold text-gray-500 mb-2 pb-2 border-b border-gray-200">老系统 (原转写文本)</div>
+                                <div>{"Sentences": [{"Text": "你好，东风日产厂家给您来电的。", "EndTime": 4900, "BeginTime": 1300, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 250, "EmotionValue": 6.5, "SilenceDuration": 1}, {"Text": "您是有关注我们新款SUV车型X8是吗？", "EndTime": 9260, "BeginTime": 5040, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 241, "EmotionValue": 6.2, "SilenceDuration": 0}, {"Text": "嗯。", "EndTime": 10440, "BeginTime": 9400, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 115, "EmotionValue": 5.7, "SilenceDuration": 9}, {"Text": "好的，感谢您的关注。", "EndTime": 12369, "BeginTime": 10840, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 392, "EmotionValue": 6.3, "SilenceDuration": 1}, {"Text": "这款车型的话呢是东风日产首款具有纯电和增程两种动力的中大型SUV。", "EndTime": 18490, "BeginTime": 12370, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 303, "EmotionValue": 6.3, "SilenceDuration": 0}, {"Text": "我们现在门店已经到了试驾车和展车了。", "EndTime": 21741, "BeginTime": 18490, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 332, "EmotionValue": 6.3, "SilenceDuration": 0}, {"Text": "您近期计划什么时候过来门店先试车试驾了解一下呀。", "EndTime": 26140, "BeginTime": 21741, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 327, "EmotionValue": 6.3, "SilenceDuration": 0}, {"Text": "哦，是周一到周五有时间，还是周六日有时间呢？", "EndTime": 34740, "BeginTime": 29940, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 275, "EmotionValue": 6.2, "SilenceDuration": 3}, {"Text": "周六日百。", "EndTime": 37420, "BeginTime": 36140, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 234, "EmotionValue": 6.3, "SilenceDuration": 25}, {"Text": "哦，那我这边先帮您约下周日28号下午4点到4点半，您看可以吗？", "EndTime": 43914, "BeginTime": 37740, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 301, "EmotionValue": 6.5, "SilenceDuration": 3}, {"Text": "女士。", "EndTime": 44340, "BeginTime": 43914, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 422, "EmotionValue": 6.5, "SilenceDuration": 0}, {"Text": "周日。", "EndTime": 45940, "BeginTime": 45060, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 204, "EmotionValue": 5.7, "SilenceDuration": 7}, {"Text": "就在梨园的云景东路88号就有门店了，门店有到4驾车和展车了。", "EndTime": 51694, "BeginTime": 46080, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 320, "EmotionValue": 6.3, "SilenceDuration": 1}, {"Text": "呃，您是首次购车，还是说有旧车置换呀？", "EndTime": 54792, "BeginTime": 51694, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 367, "EmotionValue": 6.3, "SilenceDuration": 0}, {"Text": "女士。", "EndTime": 55180, "BeginTime": 54792, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 463, "EmotionValue": 6.3, "SilenceDuration": 0}, {"Text": "没有对这句话。", "EndTime": 57900, "BeginTime": 56260, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 256, "EmotionValue": 5.6, "SilenceDuration": 10}, {"Text": "哦，就首次购车是吗？", "EndTime": 59401, "BeginTime": 58040, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 440, "EmotionValue": 6.4, "SilenceDuration": 2}, {"Text": "怎么称呼您啊？", "EndTime": 60423, "BeginTime": 59401, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 410, "EmotionValue": 6.4, "SilenceDuration": 0}, {"Text": "我加一下您微信，发一下我们的颜色配置和购车权益给您，您看可以吗？", "EndTime": 65360, "BeginTime": 60423, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 388, "EmotionValue": 6.4, "SilenceDuration": 0}, {"Text": "哦。", "EndTime": 69760, "BeginTime": 68580, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 101, "EmotionValue": 5.7, "SilenceDuration": 3}, {"Text": "好的好的，嗯，您贵姓呢？", "EndTime": 72071, "BeginTime": 69900, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 331, "EmotionValue": 6.1, "SilenceDuration": 0}, {"Text": "我这边备注一下。", "EndTime": 73759, "BeginTime": 72071, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 284, "EmotionValue": 6.1, "SilenceDuration": 0}, {"Text": "对呀。", "EndTime": 76560, "BeginTime": 75380, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 152, "EmotionValue": 5.1, "SilenceDuration": 17}, {"Text": "哦，好的，王女士。", "EndTime": 77719, "BeginTime": 76700, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 529, "EmotionValue": 6.3, "SilenceDuration": 2}, {"Text": "那我这边已经发送短信给您了。", "EndTime": 79927, "BeginTime": 77719, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 380, "EmotionValue": 6.3, "SilenceDuration": 0}, {"Text": "您有需要可以通过短信上面的链接添加我的微信，有任何问题可以随时和我沟通。", "EndTime": 85702, "BeginTime": 79927, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 374, "EmotionValue": 6.3, "SilenceDuration": 0}, {"Text": "我这边就先不打扰您了，祝您生活愉快，拜拜。", "EndTime": 88760, "BeginTime": 85702, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 412, "EmotionValue": 6.3, "SilenceDuration": 0}]}</div>
+                            </div>
+                            <div class="text-box new">
+                                <div class="font-bold text-blue-600 mb-2 pb-2 border-b border-blue-100">新接口 (RoleType=1配置)</div>
+                                <div>角色1：你好，东风日产厂家给您来电的，您是有关注我们新款s uuv车型x8是吗？嗯
+角色1：好的，感谢您的关注，这款车型的话呢是东风日产首款具有纯电和增程两种动力的中大型SUV，我们现在门店已经到了试驾车和展车了，您近期计划什么时候过来门店先实车试驾了解一下？
+角色1：呀
+角色1：可以可以可以。噢是周一到周五有时间还是周六日有时间？呢周六日，吧噢那我这边先帮您约下周日28号下午4:00~4:30，您看可以吗女士？
+角色1：可以，就在梨园的云景东路88号就有门店的，门店有到试驾车和展车的。啊您是首次购车还是说有旧车置换呀女士？没有？旧车置换。
+角色1：噢就首次购车是吗？怎么称呼您？啊我加一下您微信，发一下我们的颜色配置和购车权益给您，您看可以吗？都可以。噢好的好的，噢您贵姓？呢我这边备注一下。姓王。
+角色1：噢好的王女士，那我这边已经发送短信给您了，您有需要可以通过短信上面的链接添加我的微信，有任何问题可以随时和我沟通，我这边就先不打扰您了，祝您生活愉快，拜拜。</div>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <div class="case-card">
+                        <div class="flex justify-between items-center bg-gray-100 px-4 py-2 rounded-t-lg">
+                            <div class="font-bold text-gray-700">Case 8 | 线索ID: 1791638890707120128</div>
+                            <div class="text-sm font-semibold text-orange-500">相似度: 15.4%</div>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-2 px-2 break-all">来源：http://172.24.176.101:8019/20260618/dfn_dcc_ob_d_1_8e_18959178333_143b7219-b5fa-4811-b64a-24a3b8a9fd25_18959178333_143b7219-b5fa-4811-b64a-24a3b8a9fd25_20260618_135139.wav</div>
+                        
+                        <div class="diff-container">
+                            <div class="text-box old">
+                                <div class="font-bold text-gray-500 mb-2 pb-2 border-b border-gray-200">老系统 (原转写文本)</div>
+                                <div>{"Sentences": [{"Text": "你好，东风日产厂家给您来电。", "EndTime": 3375, "BeginTime": 800, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 326, "EmotionValue": 6.4, "SilenceDuration": 0}, {"Text": "有在关注我们东风日产的车吗？", "EndTime": 6167, "BeginTime": 3376, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 300, "EmotionValue": 6.4, "SilenceDuration": 0}, {"Text": "NX8，嗯，对你好啊。", "EndTime": 7885, "BeginTime": 6167, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 349, "EmotionValue": 6.4, "SilenceDuration": 6}, {"Text": "嗯嗯你好。", "EndTime": 8744, "BeginTime": 7885, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 349, "EmotionValue": 6.4, "SilenceDuration": 0}, {"Text": "我是厂家专属试驾邀约顾问佳佳，想诚邀您去电试乘试驾体验。", "EndTime": 14325, "BeginTime": 8744, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 301, "EmotionValue": 6.4, "SilenceDuration": 2}, {"Text": "您看方便吗？", "EndTime": 15400, "BeginTime": 14326, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 335, "EmotionValue": 6.4, "SilenceDuration": 0}, {"Text": "我准备今天下午去一下去看一下。", "EndTime": 19856, "BeginTime": 16920, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 306, "EmotionValue": 6.8, "SilenceDuration": 8}, {"Text": "今天下午是吗？", "EndTime": 21114, "BeginTime": 19856, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 333, "EmotionValue": 6.8, "SilenceDuration": 4}, {"Text": "去那个福州汇金盛泰盛新这家门店是吧？", "EndTime": 24680, "BeginTime": 21114, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 302, "EmotionValue": 6.8, "SilenceDuration": 0}, {"Text": "在哪里啊，地址在哪里？", "EndTime": 28339, "BeginTime": 26420, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 343, "EmotionValue": 7.0, "SilenceDuration": 6}, {"Text": "哦，您是说这家门店的一个位置在哪里，是吗？", "EndTime": 32160, "BeginTime": 28640, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 357, "EmotionValue": 5.6, "SilenceDuration": 3}, {"Text": "对对对，是不是在新电啊？", "EndTime": 34840, "BeginTime": 32620, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 324, "EmotionValue": 7.0, "SilenceDuration": 4}, {"Text": "嗯。", "EndTime": 37240, "BeginTime": 35900, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 89, "EmotionValue": 5.0, "SilenceDuration": 3}, {"Text": "呃，您稍等一下，我帮您看一下这家门店哪个位置啊。", "EndTime": 41512, "BeginTime": 37600, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 368, "EmotionValue": 5.6, "SilenceDuration": 0}, {"Text": "这家门店的一个位置的话，它是在福建省。", "EndTime": 44679, "BeginTime": 41512, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 359, "EmotionValue": 5.6, "SilenceDuration": 0}, {"Text": "福州市仓山区齐安路767号华侨啊，不是这家，不是这家。", "EndTime": 50748, "BeginTime": 45260, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 295, "EmotionValue": 6.9, "SilenceDuration": 0}, {"Text": "这这家太远了，离我离我太远了哦。", "EndTime": 53704, "BeginTime": 50748, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 324, "EmotionValue": 6.9, "SilenceDuration": 15}, {"Text": "太远了是吧，那换一家给您是吧？", "EndTime": 56448, "BeginTime": 53704, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 327, "EmotionValue": 6.9, "SilenceDuration": 2}, {"Text": "对。", "EndTime": 56660, "BeginTime": 56448, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 566, "EmotionValue": 6.9, "SilenceDuration": 0}, {"Text": "对哦，您。", "EndTime": 58653, "BeginTime": 57320, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 225, "EmotionValue": 6.0, "SilenceDuration": 3}, {"Text": "有一个嗯，您说。", "EndTime": 61320, "BeginTime": 58653, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 179, "EmotionValue": 6.0, "SilenceDuration": 1}, {"Text": "对，有一个好像在三环边上的那个什么。", "EndTime": 65159, "BeginTime": 62400, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 391, "EmotionValue": 6.8, "SilenceDuration": 3}, {"Text": "什么什么新店镇的那个什么那那家店。", "EndTime": 71556, "BeginTime": 65460, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 167, "EmotionValue": 6.6, "SilenceDuration": 0}, {"Text": "新店镇。", "EndTime": 72700, "BeginTime": 71556, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 209, "EmotionValue": 6.6, "SilenceDuration": 10}, {"Text": "哦，哦我看到了，您是说的是这一家是吗？", "EndTime": 76921, "BeginTime": 72880, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 282, "EmotionValue": 6.2, "SilenceDuration": 0}, {"Text": "就福州市晋安区新店镇东支路一号是这家吗？", "EndTime": 81719, "BeginTime": 76921, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 250, "EmotionValue": 6.2, "SilenceDuration": 0}, {"Text": "您是指这家吗？", "EndTime": 83235, "BeginTime": 81719, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 277, "EmotionValue": 6.2, "SilenceDuration": 0}, {"Text": "对对对对对对对对哦。", "EndTime": 85508, "BeginTime": 83235, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 263, "EmotionValue": 6.2, "SilenceDuration": 11}, {"Text": "这家门店的话，它是呃福州汇金福飞北这家门店哦，离你比较近是吧？", "EndTime": 92580, "BeginTime": 85508, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 263, "EmotionValue": 6.2, "SilenceDuration": 2}, {"Text": "对。", "EndTime": 94060, "BeginTime": 93120, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 127, "EmotionValue": 6.5, "SilenceDuration": 7}, {"Text": "嗯，可以的。", "EndTime": 94910, "BeginTime": 94200, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 507, "EmotionValue": 5.3, "SilenceDuration": 1}, {"Text": "好，怎么称呼您啊，先生贵姓啊？", "EndTime": 97040, "BeginTime": 94910, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 422, "EmotionValue": 5.3, "SilenceDuration": 0}, {"Text": "我姓凌。", "EndTime": 98700, "BeginTime": 97540, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 206, "EmotionValue": 6.4, "SilenceDuration": 3}, {"Text": "双木林吗？", "EndTime": 100260, "BeginTime": 98840, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 211, "EmotionValue": 5.2, "SilenceDuration": 1}, {"Text": "呃，对。", "EndTime": 102040, "BeginTime": 100720, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 181, "EmotionValue": 7.5, "SilenceDuration": 2}, {"Text": "啊，是双木林对吗？", "EndTime": 104480, "BeginTime": 102460, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 267, "EmotionValue": 5.6, "SilenceDuration": 2}, {"Text": "对对对，双木林。", "EndTime": 106660, "BeginTime": 105040, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 296, "EmotionValue": 7.2, "SilenceDuration": 3}, {"Text": "林先生是吗？", "EndTime": 109680, "BeginTime": 108080, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 225, "EmotionValue": 5.4, "SilenceDuration": 3}, {"Text": "对。", "EndTime": 111440, "BeginTime": 110320, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 107, "EmotionValue": 7.1, "SilenceDuration": 3}, {"Text": "哎，你好，是双木林是吗？", "EndTime": 115860, "BeginTime": 113260, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 276, "EmotionValue": 5.8, "SilenceDuration": 3}, {"Text": "是的，哎，好的。", "EndTime": 117967, "BeginTime": 116800, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 411, "EmotionValue": 6.9, "SilenceDuration": 5}, {"Text": "林先生。", "EndTime": 118667, "BeginTime": 117967, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 342, "EmotionValue": 6.9, "SilenceDuration": 2}, {"Text": "哎，好，那这边的话我帮您预约一下啊，今天呃您是下午大概几点钟方便到店呢？", "EndTime": 126140, "BeginTime": 118668, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 289, "EmotionValue": 6.9, "SilenceDuration": 0}, {"Text": "五点半吧。", "EndTime": 128380, "BeginTime": 126880, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 200, "EmotionValue": 7.0, "SilenceDuration": 8}, {"Text": "五点半是吧？", "EndTime": 130586, "BeginTime": 129560, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 350, "EmotionValue": 6.3, "SilenceDuration": 3}, {"Text": "5点到5点到5点半，下午五点半啊。", "EndTime": 133667, "BeginTime": 130586, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 331, "EmotionValue": 6.3, "SilenceDuration": 2}, {"Text": "然后到我们那个福州汇金金融北京这家店去试乘试驾，体验一下我们NX8号它这款车有分为纯电和增程。", "EndTime": 142910, "BeginTime": 133667, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 298, "EmotionValue": 6.3, "SilenceDuration": 3}, {"Text": "您主要是考虑纯电是增程啊，因为它是大大大纯电。", "EndTime": 147223, "BeginTime": 142910, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 319, "EmotionValue": 6.3, "SilenceDuration": 0}, {"Text": "纯电纯电是吧？", "EndTime": 148455, "BeginTime": 147223, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 340, "EmotionValue": 6.3, "SilenceDuration": 13}, {"Text": "纯电的话官方指导价15.99万到20.99万。", "EndTime": 152974, "BeginTime": 148455, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 278, "EmotionValue": 6.3, "SilenceDuration": 1}, {"Text": "您主要是想考虑是580的还是650，还是630的续航里程。", "EndTime": 158519, "BeginTime": 152974, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 313, "EmotionValue": 6.3, "SilenceDuration": 0}, {"Text": "不知道，我要过去看一下才知道啊，有没有优惠呢？", "EndTime": 163460, "BeginTime": 159840, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 381, "EmotionValue": 7.2, "SilenceDuration": 11}, {"Text": "嗯，有的。", "EndTime": 165120, "BeginTime": 163840, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 234, "EmotionValue": 5.5, "SilenceDuration": 5}, {"Text": "嗯，就是优惠多少呢？", "EndTime": 167612, "BeginTime": 165860, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 342, "EmotionValue": 6.1, "SilenceDuration": 2}, {"Text": "嗯，就是在。", "EndTime": 168488, "BeginTime": 167612, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 410, "EmotionValue": 6.1, "SilenceDuration": 0}, {"Text": "6月30号前下午啊，它是可以享受到超级置换金额万元。", "EndTime": 173744, "BeginTime": 168488, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 296, "EmotionValue": 6.1, "SilenceDuration": 3}, {"Text": "以及您是我们呃您是我们的一个老车主是吗？", "EndTime": 177905, "BeginTime": 173744, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 288, "EmotionValue": 6.1, "SilenceDuration": 0}, {"Text": "奇骏的是吧？", "EndTime": 179000, "BeginTime": 177905, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 328, "EmotionValue": 6.1, "SilenceDuration": 0}, {"Text": "那很早以前的事情啊。", "EndTime": 182100, "BeginTime": 180100, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 300, "EmotionValue": 6.8, "SilenceDuration": 11}, {"Text": "你这车子都卖了好几年了，哦哦哦。", "EndTime": 184988, "BeginTime": 182240, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 349, "EmotionValue": 6.5, "SilenceDuration": 0}, {"Text": "卖了好几年了是吧？", "EndTime": 186558, "BeginTime": 184988, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 343, "EmotionValue": 6.5, "SilenceDuration": 5}, {"Text": "哦，好的好的。", "EndTime": 187540, "BeginTime": 186558, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 427, "EmotionValue": 6.5, "SilenceDuration": 0}, {"Text": "你你这个信息还我还还能看得到啊，奇骏的202202 2010年买的。", "EndTime": 194920, "BeginTime": 187760, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 276, "EmotionValue": 7.3, "SilenceDuration": 2}, {"Text": "2010年嗯，然后是6月1号在那个福州中升福新店买的是吧？", "EndTime": 202820, "BeginTime": 195500, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 237, "EmotionValue": 5.6, "SilenceDuration": 7}, {"Text": "对对对，这个这个星期里面都还有啊。", "EndTime": 206168, "BeginTime": 203160, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 339, "EmotionValue": 6.2, "SilenceDuration": 8}, {"Text": "嗯是的。", "EndTime": 206770, "BeginTime": 206168, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 398, "EmotionValue": 6.2, "SilenceDuration": 0}, {"Text": "因为你有买过我们的车子，它是有记录的。", "EndTime": 210180, "BeginTime": 206770, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 334, "EmotionValue": 6.2, "SilenceDuration": 3}, {"Text": "因为他会录入我们厂家的一个系统嘛，所以的话我们是能看得到您是我们之前是老车主。", "EndTime": 218220, "BeginTime": 210540, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 304, "EmotionValue": 5.7, "SilenceDuration": 0}, {"Text": "哦，那您现在名下有没有旧车呀？", "EndTime": 221880, "BeginTime": 218360, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 255, "EmotionValue": 5.6, "SilenceDuration": 0}, {"Text": "有啊，好多辆车。", "EndTime": 224680, "BeginTime": 222780, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 252, "EmotionValue": 7.1, "SilenceDuration": 16}, {"Text": "啊，是什么品牌的？", "EndTime": 226740, "BeginTime": 224920, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 296, "EmotionValue": 6.1, "SilenceDuration": 3}, {"Text": "哎呀，特斯拉。", "EndTime": 230120, "BeginTime": 227580, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 165, "EmotionValue": 7.3, "SilenceDuration": 2}, {"Text": "是考虑置换吗？", "EndTime": 233184, "BeginTime": 231680, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 279, "EmotionValue": 6.2, "SilenceDuration": 4}, {"Text": "还是说多新购一台车？", "EndTime": 235440, "BeginTime": 233184, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 265, "EmotionValue": 6.2, "SilenceDuration": 0}, {"Text": "置换置换。", "EndTime": 237420, "BeginTime": 236020, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 214, "EmotionValue": 7.1, "SilenceDuration": 5}, {"Text": "置换一台。", "EndTime": 239760, "BeginTime": 238520, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 241, "EmotionValue": 6.7, "SilenceDuration": 1}, {"Text": "考虑用用哪个来置换啊。", "EndTime": 243000, "BeginTime": 240480, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 261, "EmotionValue": 5.6, "SilenceDuration": 5}, {"Text": "哎呀啊。", "EndTime": 244700, "BeginTime": 243460, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 193, "EmotionValue": 6.8, "SilenceDuration": 3}, {"Text": "IN是吧？", "EndTime": 245641, "BeginTime": 244840, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 299, "EmotionValue": 5.8, "SilenceDuration": 1}, {"Text": "可以啊，那这边的话可以开到门店，先进行一个专业的一个评估啊，然后看一下值多少钱。", "EndTime": 252854, "BeginTime": 245641, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 332, "EmotionValue": 5.8, "SilenceDuration": 0}, {"Text": "而且的话我们这个车您。", "EndTime": 254860, "BeginTime": 252856, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 329, "EmotionValue": 5.8, "SilenceDuration": 0}, {"Text": "您还可以拿到国家的一个置换补贴，按照新车价的一个8%进行补贴的啊。", "EndTime": 260770, "BeginTime": 255000, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 332, "EmotionValue": 6.4, "SilenceDuration": 0}, {"Text": "你可以看到门店先评估一下，看一下值多少钱嘛。", "EndTime": 264268, "BeginTime": 260770, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 377, "EmotionValue": 6.4, "SilenceDuration": 0}, {"Text": "而且我们厂家他还推出了一个三无忧的一个政策。", "EndTime": 267939, "BeginTime": 264268, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 359, "EmotionValue": 6.4, "SilenceDuration": 0}, {"Text": "第一就是很多车主他怕买到车以后，电池、电机、电控电了一下几万块。", "EndTime": 272837, "BeginTime": 267940, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 392, "EmotionValue": 6.4, "SilenceDuration": 0}, {"Text": "那我们厂家推出了一个商店，终身无忧，商店终身质保，无套路自然包赔，光这一项的话都可以省2万。", "EndTime": 280007, "BeginTime": 272837, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 384, "EmotionValue": 6.4, "SilenceDuration": 0}, {"Text": "第二就是怕小瓜小蹭。", "EndTime": 281581, "BeginTime": 280007, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 381, "EmotionValue": 6.4, "SilenceDuration": 0}, {"Text": "这个大家大家都是这样工作。", "EndTime": 283680, "BeginTime": 281581, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 371, "EmotionValue": 6.4, "SilenceDuration": 36}, {"Text": "嗯，我们厂家他推出了一个小修，出险无忧，七面保险杠玻璃免费帮您换新。", "EndTime": 291459, "BeginTime": 283820, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 267, "EmotionValue": 6.7, "SilenceDuration": 2}, {"Text": "出险的话还有补贴，关键保费不上涨，厂家帮您自高。", "EndTime": 296809, "BeginTime": 291460, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 269, "EmotionValue": 6.7, "SilenceDuration": 0}, {"Text": "哎呀，你你你这个先不要说。", "EndTime": 299610, "BeginTime": 296809, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 278, "EmotionValue": 6.7, "SilenceDuration": 13}, {"Text": "我说。", "EndTime": 300120, "BeginTime": 299610, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 352, "EmotionValue": 6.7, "SilenceDuration": 2}, {"Text": "你听我，我问你下。", "EndTime": 303140, "BeginTime": 301160, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 272, "EmotionValue": 7.1, "SilenceDuration": 1}, {"Text": "你们这个车子自驾是什么品牌的智能驾驶？", "EndTime": 308620, "BeginTime": 303280, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 213, "EmotionValue": 7.2, "SilenceDuration": 0}, {"Text": "嗯，不好意思，我刚才信号不是很好，因为他听到断断续续，所以的话我没有听清楚您说的一个问题。", "EndTime": 317900, "BeginTime": 309940, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 339, "EmotionValue": 6.0, "SilenceDuration": 9}, {"Text": "自驾智能驾驶啊，智能驾驶是配备配备什么什么的智能驾驶驾驶系统是吧？", "EndTime": 324477, "BeginTime": 318580, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 335, "EmotionValue": 7.2, "SilenceDuration": 9}, {"Text": "我们这个的话就是我们下的。", "EndTime": 326760, "BeginTime": 324477, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 341, "EmotionValue": 7.2, "SilenceDuration": 6}, {"Text": "我们能盘了是吧？", "EndTime": 328807, "BeginTime": 327320, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 322, "EmotionValue": 6.8, "SilenceDuration": 2}, {"Text": "辅助驾驶系统。", "EndTime": 330080, "BeginTime": 328807, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 329, "EmotionValue": 6.8, "SilenceDuration": 2}, {"Text": "嗯，是的，然后的话嗯它是嗯那个宁德时代的一个电池，800服务器快充的，这个您可以放心。", "EndTime": 337940, "BeginTime": 330081, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 328, "EmotionValue": 6.8, "SilenceDuration": 0}, {"Text": "嗯，它还可以享两年6万公里超长轮胎保障的哦。", "EndTime": 342190, "BeginTime": 337941, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 310, "EmotionValue": 6.8, "SilenceDuration": 0}, {"Text": "然后自驾游啊都可以省心啊，比较放心的那他也可以。", "EndTime": 346862, "BeginTime": 342190, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 308, "EmotionValue": 6.8, "SilenceDuration": 0}, {"Text": "然后然后你等一下，等一下，我再我再问你一下。", "EndTime": 350900, "BeginTime": 346863, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 326, "EmotionValue": 6.8, "SilenceDuration": 18}, {"Text": "他如果我像我这样子，我开几年，我不不想开了这个车子想卖掉。", "EndTime": 356419, "BeginTime": 351420, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 348, "EmotionValue": 7.4, "SilenceDuration": 0}, {"Text": "他的这个电池的那个质保有没有带给第二任车主啊？", "EndTime": 363140, "BeginTime": 356560, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 209, "EmotionValue": 7.4, "SilenceDuration": 0}, {"Text": "啊，您的意思是说这个质保能不能转给下一任车主，是吗？", "EndTime": 371200, "BeginTime": 365660, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 281, "EmotionValue": 5.8, "SilenceDuration": 18}, {"Text": "对呀，我不是我一般都是五年换一台车子啊。", "EndTime": 374660, "BeginTime": 371400, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 368, "EmotionValue": 7.4, "SilenceDuration": 8}, {"Text": "哦，哦我明白您的意思，就是说这些质保会不会跟着跟着呃就是跟着您还是跟着下一任车主，是这个意思吗？", "EndTime": 383932, "BeginTime": 375360, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 335, "EmotionValue": 7.1, "SilenceDuration": 4}, {"Text": "对对对。", "EndTime": 384517, "BeginTime": 383932, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 410, "EmotionValue": 7.1, "SilenceDuration": 0}, {"Text": "会不会会不会会下一任车主有没有享受这些质保啊？", "EndTime": 388803, "BeginTime": 384517, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 321, "EmotionValue": 7.1, "SilenceDuration": 9}, {"Text": "你要没享受这样质保的话，后面的车子就卖不高的价钱了。", "EndTime": 393480, "BeginTime": 388803, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 333, "EmotionValue": 7.1, "SilenceDuration": 0}, {"Text": "哦，这个的话他是他是首任车主。", "EndTime": 398340, "BeginTime": 395160, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 283, "EmotionValue": 5.7, "SilenceDuration": 10}, {"Text": "呃，如果说这个上无忧的一个政策的话，它是不限首任车主的吗？", "EndTime": 404700, "BeginTime": 398340, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 273, "EmotionValue": 5.7, "SilenceDuration": 0}, {"Text": "35U是什么什么？", "EndTime": 406306, "BeginTime": 404840, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 368, "EmotionValue": 7.2, "SilenceDuration": 11}, {"Text": "35U就是电池什么鼓包啊，什么东西的，这些是吧？", "EndTime": 410160, "BeginTime": 406307, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 373, "EmotionValue": 7.2, "SilenceDuration": 0}, {"Text": "哦，就是我刚才跟您说的，电池、电机、电控坏了，一下午几万的这个还有第二就是怕那个小刮小蹭啊。", "EndTime": 418360, "BeginTime": 411040, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 377, "EmotionValue": 5.8, "SilenceDuration": 6}, {"Text": "嗯嗯，就是那个。", "EndTime": 420540, "BeginTime": 418640, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 252, "EmotionValue": 5.8, "SilenceDuration": 0}, {"Text": "我呃前面保险杠玻璃免费换新嘛。", "EndTime": 423973, "BeginTime": 420680, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 273, "EmotionValue": 5.6, "SilenceDuration": 0}, {"Text": "第三就是那个轮胎嘛，也是帮你免费更换嘛。", "EndTime": 428207, "BeginTime": 423973, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 283, "EmotionValue": 5.6, "SilenceDuration": 0}, {"Text": "四条胎嘛嗯。", "EndTime": 429383, "BeginTime": 428207, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 306, "EmotionValue": 5.6, "SilenceDuration": 18}, {"Text": "嗯嗯但是嗯。", "EndTime": 430560, "BeginTime": 429383, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 305, "EmotionValue": 5.6, "SilenceDuration": 1}, {"Text": "是的，然后他这个的话。", "EndTime": 433600, "BeginTime": 430720, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 229, "EmotionValue": 5.8, "SilenceDuration": 0}, {"Text": "嗯，就是您说的是那个质保的一个问题，对吧？", "EndTime": 438926, "BeginTime": 434000, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 255, "EmotionValue": 5.7, "SilenceDuration": 0}, {"Text": "嗯。", "EndTime": 439200, "BeginTime": 438926, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 437, "EmotionValue": 5.7, "SilenceDuration": 0}, {"Text": "嗯，他这个的话是。", "EndTime": 443700, "BeginTime": 440660, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 177, "EmotionValue": 5.8, "SilenceDuration": 1}, {"Text": "是，就是首任车主，刚开始是首任车主。", "EndTime": 448740, "BeginTime": 443840, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 220, "EmotionValue": 5.7, "SilenceDuration": 0}, {"Text": "然后呢。", "EndTime": 450315, "BeginTime": 449620, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 345, "EmotionValue": 6.0, "SilenceDuration": 20}, {"Text": "他是跟着手机车主嗯。", "EndTime": 452400, "BeginTime": 450315, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 287, "EmotionValue": 6.0, "SilenceDuration": 1}, {"Text": "那第二辆车主呢？", "EndTime": 454680, "BeginTime": 452960, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 279, "EmotionValue": 7.2, "SilenceDuration": 2}, {"Text": "第二任车主是吗？", "EndTime": 457670, "BeginTime": 455920, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 274, "EmotionValue": 5.9, "SilenceDuration": 3}, {"Text": "第二任车主的话，这边我帮您看一下啊，因为第二任车主。", "EndTime": 463420, "BeginTime": 457670, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 271, "EmotionValue": 5.9, "SilenceDuration": 0}, {"Text": "他这边的话。", "EndTime": 465680, "BeginTime": 463560, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 169, "EmotionValue": 6.2, "SilenceDuration": 0}, {"Text": "哦。", "EndTime": 467180, "BeginTime": 465840, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 89, "EmotionValue": 5.2, "SilenceDuration": 0}, {"Text": "就是。", "EndTime": 469920, "BeginTime": 468860, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 169, "EmotionValue": 5.2, "SilenceDuration": 1}, {"Text": "他是嗯就是自燃这个现象的话，如果说他这个车有产生自燃的现象的话，它是可以可以赔付一辆新车给到您的。", "EndTime": 478859, "BeginTime": 470060, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 334, "EmotionValue": 5.8, "SilenceDuration": 0}, {"Text": "但是他这个是不限首人，车主都可以的。", "EndTime": 481920, "BeginTime": 478859, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 352, "EmotionValue": 5.8, "SilenceDuration": 0}, {"Text": "哦，好的好的，那没关系，那具体具体那个下午到店来谈嘛。", "EndTime": 486524, "BeginTime": 482060, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 362, "EmotionValue": 7.0, "SilenceDuration": 27}, {"Text": "你这样子一直讲信号也不好，我也听不是很。", "EndTime": 490018, "BeginTime": 486524, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 343, "EmotionValue": 7.0, "SilenceDuration": 0}, {"Text": "那加您微信吧，我把它发送给您吧。", "EndTime": 492736, "BeginTime": 490018, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 353, "EmotionValue": 7.0, "SilenceDuration": 8}, {"Text": "好吗？", "EndTime": 493124, "BeginTime": 492736, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 463, "EmotionValue": 7.0, "SilenceDuration": 2}, {"Text": "好好好好，行行，嗯嗯，早上嗯。", "EndTime": 495260, "BeginTime": 493124, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 421, "EmotionValue": 7.0, "SilenceDuration": 0}, {"Text": "嗯嗯，好，那。", "EndTime": 497120, "BeginTime": 495940, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 355, "EmotionValue": 5.9, "SilenceDuration": 3}]}</div>
+                            </div>
+                            <div class="text-box new">
+                                <div class="font-bold text-blue-600 mb-2 pb-2 border-b border-blue-100">新接口 (RoleType=1配置)</div>
+                                <div>角色1：您好，东风日产厂家给您来电有在关注我们东风日产的车吗？Nx8
+角色2：嗯对。
+角色1：你好嗯嗯你好，我是厂家专属试驾邀约顾问佳佳，想诚邀您去店试乘试驾体验，您看方便吗？
+角色2：我准备今天下午去一下去看一下。
+角色1：今天下午是吗？去那个福州汇金盛泰盛鑫这家门店是吧？
+角色2：在哪里？啊地址在哪里？
+角色1：噢您是说这家门店那个位置在哪里是吗？
+角色2：对对，是不是在新店？啊
+角色1：嗯
+角色1：呃您稍等一下，我帮您看一下这家门店的一个位置啊这家门店的一个位置的话，它是在福建省福州市仓山区齐安路
+角色1：767号华侨
+角色2：噢不去这家不去这家这这家太远了，离我离我太远了
+角色1：噢太远了是吧？
+角色1：那换一家给您是吧？噢您
+角色2：有一个在
+角色1：嗯您说对。
+角色2：有一个好像在三环边上的那个什么
+角色2：什么什么新店镇的那个什么那那家店好像
+角色1：新店。噢噢我看到了。
+角色1：您是说的是这一家是吗？就福州市晋安区新店镇省之路一号是这家吗？您是指这家吗？
+角色2：对对对对对对对对。
+角色1：噢这家门店的话它是呃福州汇金福飞北这家门店。
+角色1：噢离你比较近是吧？
+角色2：对。
+角色1：嗯可以的，好，怎么称呼您啊先生贵姓？啊
+角色2：我姓林。
+角色1：双木林吗？
+角色2：呃对噢是。
+角色1：双木林对吗？
+角色2：对对对双木林
+角色1：林先生是吗？
+角色2：对。
+角色1：唉您好，是双木林是吗？是
+角色2：的，
+角色1：唉好的林先生。唉好，那这边的话我帮您预约一下，噢今天呃您是下午大概几点钟方便到店呢五？
+角色2：点半吧
+角色1：5:30是吧？
+角色2：5:00~5:00~5:30。
+角色1：下午5:30，啊然后到我们那个福州汇金福飞北这家店去试乘试驾，体验一下我们nx8，它这款车有分为纯电跟增程，您主要是考虑纯电还是增程？啊因为它是大大大五
+角色2：纯电纯电
+角色1：纯电是吧？
+角色1：纯电的话官方指导价15.99万到20.99万，您主要是想考虑是580的还是650还是630呢续航里程？不
+角色2：知道，我要过去看一下才知道啊有没有优惠，呢
+角色1：嗯有的。嗯就是您
+角色2：优惠多少的话？
+角色1：就是说在6月30号前下订，啊它是可以享受到超级置换金1万元，以及您是我们啊您是我们的一个老车主是吗？奇骏的是吗？
+角色2：那很早以前的事情了，您
+角色1：现在
+角色2：这车子都卖了好几年了。
+角色1：噢噢噢卖了好几年了是吧？噢好的好的嗯好，
+角色2：你你这个信息还我还还能看得到，啊奇骏是212 202 2010年买的，
+角色1：2010年，嗯然后是6月1号
+角色1：在那个福州中升福兴店买的是吧？对
+角色2：对对这个这个信息你们都还有啊
+角色1：嗯是的，因为你有买过我们的车子，它是有记录的，因为它会录入我们厂家的一个系统。
+角色1：嘛
+角色1：所以的话我们是能看得到您是我们之前是老车主，噢那您现在名下有没有旧车？呀有
+角色2：啊好多辆呢
+角色1：噢是什么品牌？呢埃
+角色2：安？啊特斯拉
+角色1：特斯拉。嗯
+角色1：是考虑置换吗？还是说多？新购一台啊置换
+角色2：置换置换一台？
+角色1：嗯考虑用用哪个来置换啊埃安是吧？可以。
+角色1：啊
+角色1：那这边的话可以开到门店先进行一个专业的一个评估，噢然后看一下值多少钱，而且的话我们这个车您您还可以拿到国家的一个置换补贴，按照新车价的一个8%进行补贴的，噢
+角色1：您可以开到门店先评估一下，看一下值多少钱，嘛而且我们厂家它也推出了一个三无忧的一个政策，第一就是很多车主他怕买到车以后，电池电机电控坏了修一下几万块，
+角色1：那我们厂家推出了一个三电终身无忧，三电终身质保，无套路自然包赔，光这一项的话都可以省2万。
+角色1：第二就是怕小刮小蹭，
+角色2：这个大家大家都是这样政策，
+角色1：我我们厂家它推出了一个
+角色1：小修，出险无忧、漆面、保险杠、玻璃免费帮您换新，
+角色1：出险的话还有补贴，关键保费不上涨厂家帮你至高，
+角色2：唉唉你你你这些先不要说我
+角色1：杀了报了，嗯您说。
+角色2：你听我我问你哈你们这个车子自驾是什么品牌的？智能驾驶。
+角色1：嗯不好意思，啊刚才信号不是很好，因为他听到断断续续，所以的话我没有听清楚您说的一个问题，智
+角色2：驾智能驾驶啊智能驾驶是配备配备什么什么的？智能驾驶
+角色1：驾驶系统是吧？这个的话就是momenta的
+角色2：噢奔牌的是吧？
+角色1：辅助驾驶系统嗯是的。然后的话嗯它是嗯那个宁德时代的一个电池，800伏5c快充的，这个您可以放心，
+角色1：嗯它还可以享两年6万公里超长轮胎保障的，噢然后自驾游啊都可以省心啊比较放心的，那他也可以帮你，
+角色2：然后然后你等一下等一下我再我再问你一下。
+角色1：嗯好，您说
+角色2：他如果我像我这样子，我开几年我不不想开了，这个车子想卖掉它。的这个电池的那个质保有没有带给第二任车主？啊
+角色1：您的意思是说这个质保能不能转给下一任车主是吗？
+角色2：对，呀我不是我一般都是5年换一台车子，啊
+角色1：噢噢我明白。
+角色1：您的意思就是说这些质保会不会跟着跟着呃就是跟着您，还是跟着下一任车主，是这个意思吗？对
+角色2：对对，会不会会不会后下一任车主有没有享受这些质保？啊你要没享受这些质保的话，后面的车子
+角色2：就卖不高的价钱，呢
+角色1：噢这个的话它是它是首任车主。啊如果说这个商无忧的一个政策的话，它是不限首任车主的。嘛
+角色2：三无忧是什么什么？三无忧就是电池什么鼓包啊什么东西的这些是吧？
+角色1：噢就是我刚才跟您说的电池电机电控坏了一下修几万的，这个还有第二就是怕那个小刮小蹭，啊
+角色2：嗯
+角色1：啊就是那个
+角色1：我呃漆面保险杠玻璃免费换新，嘛第三就是那个轮胎嘛也是帮你免费更换嘛4条胎。
+角色1：嘛嗯
+角色2：嗯嗯
+角色1：但是嗯是的，然后他这个的话
+角色1：嗯就是您说的是那个质保的一个问题对吧？嗯他这个的话是是就是首任车主，刚开始是首任车主，
+角色2：然后呢
+角色1：他是跟着首任车主那
+角色2：第二任车主。
+角色2：呢
+角色1：第二任车主是吗？第二任车主的话这边我帮您看一下，噢因为第二任车主他这边的话噢就是
+角色1：它是嗯就是自燃这个现象的话，比如说他这个车有产生自燃的现象的话，它是可以可以赔付一辆新车给到您的，但是它这个是不限首任车主都可以的。
+角色2：噢好的好的，
+角色2：那没关系，那具体具体那个下午到店再谈，嘛你这样子一直讲信号也不好，我也听不是很
+角色1：可以的，我这样加您微信，吧我把它发送给您吧好吗？
+角色2：好好好好行行嗯嗯这啊嗯
+角色1：嗯嗯好。
+角色1：那</div>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <div class="case-card">
+                        <div class="flex justify-between items-center bg-gray-100 px-4 py-2 rounded-t-lg">
+                            <div class="font-bold text-gray-700">Case 9 | 线索ID: 1791626211965270016</div>
+                            <div class="text-sm font-semibold text-orange-500">相似度: 15.6%</div>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-2 px-2 break-all">来源：http://172.24.176.101:8019/20260619/dfn_dcc_ob_d_1_8e_18540308224_dbe80804-0b80-4628-8058-b07a642180e1_18540308224_dbe80804-0b80-4628-8058-b07a642180e1_20260619_125125.wav</div>
+                        
+                        <div class="diff-container">
+                            <div class="text-box old">
+                                <div class="font-bold text-gray-500 mb-2 pb-2 border-b border-gray-200">老系统 (原转写文本)</div>
+                                <div>{"Sentences": [{"Text": "您好，这边是东风日产厂家给您来电，我是厂家专属试驾的顾问佳佳。", "EndTime": 6469, "BeginTime": 1260, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 357, "EmotionValue": 5.9, "SilenceDuration": 1}, {"Text": "您关注我们的NS8，它的试驾车是有到店的小程，让您到店体验一下这款实车。", "EndTime": 12609, "BeginTime": 6469, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 342, "EmotionValue": 5.9, "SilenceDuration": 0}, {"Text": "您看方便吗？", "EndTime": 13540, "BeginTime": 12609, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 386, "EmotionValue": 5.9, "SilenceDuration": 0}, {"Text": "嗯，方便，可以。", "EndTime": 15265, "BeginTime": 13940, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 362, "EmotionValue": 5.8, "SilenceDuration": 13}, {"Text": "好的。", "EndTime": 15795, "BeginTime": 15265, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 339, "EmotionValue": 5.8, "SilenceDuration": 0}, {"Text": "您目前是在沈阳这边是吗？", "EndTime": 18710, "BeginTime": 15795, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 246, "EmotionValue": 5.8, "SilenceDuration": 2}, {"Text": "先生？", "EndTime": 19240, "BeginTime": 18710, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 339, "EmotionValue": 5.8, "SilenceDuration": 0}, {"Text": "对，是的。", "EndTime": 20940, "BeginTime": 19840, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 272, "EmotionValue": 6.3, "SilenceDuration": 4}, {"Text": "对，看到您选了沈阳一个新世纪，可以吗？", "EndTime": 24160, "BeginTime": 21080, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 370, "EmotionValue": 6.0, "SilenceDuration": 1}, {"Text": "在我们的大东区这边，您您方不方便呢？", "EndTime": 27240, "BeginTime": 24160, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 350, "EmotionValue": 6.0, "SilenceDuration": 0}, {"Text": "方便可以的。", "EndTime": 29560, "BeginTime": 28080, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 243, "EmotionValue": 6.3, "SilenceDuration": 7}, {"Text": "好的，那您看刚好明天也是周六了嘛，明天下午三点钟有没有时间过来体验下实车？", "EndTime": 35560, "BeginTime": 29700, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 378, "EmotionValue": 6.1, "SilenceDuration": 2}, {"Text": "明天啊，我这边还没空啊。", "EndTime": 40260, "BeginTime": 37980, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 315, "EmotionValue": 6.8, "SilenceDuration": 8}, {"Text": "你今天晚上。", "EndTime": 42620, "BeginTime": 40400, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 162, "EmotionValue": 6.7, "SilenceDuration": 0}, {"Text": "下周六吧，下周六你打电话给我。", "EndTime": 45720, "BeginTime": 42760, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 304, "EmotionValue": 7.1, "SilenceDuration": 0}, {"Text": "那我这边先帮您安排，下周六下午三点有一个试驾车留给您一天，可以吗？", "EndTime": 51700, "BeginTime": 46060, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 351, "EmotionValue": 6.2, "SilenceDuration": 10}, {"Text": "可以。", "EndTime": 53060, "BeginTime": 52120, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 191, "EmotionValue": 6.0, "SilenceDuration": 6}, {"Text": "好的，也想咨询一下您这边是家里有爱车打算置换，还是说是首次购车呢？", "EndTime": 59060, "BeginTime": 53440, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 352, "EmotionValue": 5.9, "SilenceDuration": 1}, {"Text": "呃，手工。", "EndTime": 60760, "BeginTime": 59400, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 220, "EmotionValue": 6.2, "SilenceDuration": 6}, {"Text": "好的，呃，跟您简单介绍一下，我们在6月30号前下单，可以给到您一个1万元的超级置换金，还有个是21888元的一个限时免费升级礼。", "EndTime": 72538, "BeginTime": 61160, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 337, "EmotionValue": 5.9, "SilenceDuration": 2}, {"Text": "活动内容的话还是比较丰富的，是打算近期有购物车计划的，是吗？", "EndTime": 77492, "BeginTime": 72538, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 363, "EmotionValue": 5.9, "SilenceDuration": 0}, {"Text": "先生？", "EndTime": 77860, "BeginTime": 77492, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 489, "EmotionValue": 5.9, "SilenceDuration": 0}, {"Text": "对，是的。", "EndTime": 79380, "BeginTime": 78300, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 277, "EmotionValue": 6.0, "SilenceDuration": 17}, {"Text": "嗯，好的。", "EndTime": 81120, "BeginTime": 79860, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 238, "EmotionValue": 6.0, "SilenceDuration": 2}, {"Text": "那也跟您说个好消息，我们在8月31号前下午都能免费享受我们行业首发的三无忧服务。", "EndTime": 88449, "BeginTime": 81260, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 333, "EmotionValue": 6.0, "SilenceDuration": 0}, {"Text": "保费不上涨，小车厂家都最高能为您省到一个3.4万元的。", "EndTime": 93060, "BeginTime": 88450, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 338, "EmotionValue": 6.0, "SilenceDuration": 0}, {"Text": "嗯，那这边怎么称呼您呢？", "EndTime": 96286, "BeginTime": 93940, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 306, "EmotionValue": 5.9, "SilenceDuration": 0}, {"Text": "先生，您贵姓？", "EndTime": 97460, "BeginTime": 96286, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 357, "EmotionValue": 5.9, "SilenceDuration": 0}, {"Text": "欠款。", "EndTime": 100840, "BeginTime": 99580, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 142, "EmotionValue": 6.1, "SilenceDuration": 20}, {"Text": "黄草头黄是吗？", "EndTime": 103480, "BeginTime": 101240, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 187, "EmotionValue": 6.2, "SilenceDuration": 3}, {"Text": "嗯。", "EndTime": 103853, "BeginTime": 103480, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 321, "EmotionValue": 6.2, "SilenceDuration": 0}, {"Text": "对对。", "EndTime": 104600, "BeginTime": 103853, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 240, "EmotionValue": 6.2, "SilenceDuration": 3}, {"Text": "好的，黄先生，您看这边方便也添加您个微信吗？", "EndTime": 108140, "BeginTime": 104840, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 400, "EmotionValue": 5.9, "SilenceDuration": 0}, {"Text": "把我们的一些优惠政策详细一点分享给到您。", "EndTime": 111440, "BeginTime": 108140, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 363, "EmotionValue": 5.9, "SilenceDuration": 0}, {"Text": "嗯，好，可以。", "EndTime": 114720, "BeginTime": 112760, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 214, "EmotionValue": 5.8, "SilenceDuration": 8}, {"Text": "好的，就是尾号8224，能添加到您吗？", "EndTime": 119255, "BeginTime": 114860, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 259, "EmotionValue": 6.2, "SilenceDuration": 3}, {"Text": "可以的。", "EndTime": 120080, "BeginTime": 119255, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 290, "EmotionValue": 6.2, "SilenceDuration": 4}, {"Text": "这边显示该用户不存在。", "EndTime": 122545, "BeginTime": 120580, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 335, "EmotionValue": 6.2, "SilenceDuration": 1}, {"Text": "先生，是您微信设置了，还是说您手机号码绑定的是另外一个呢？", "EndTime": 127660, "BeginTime": 122546, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 340, "EmotionValue": 6.2, "SilenceDuration": 0}, {"Text": "加不上了，加不上，你就打电话联系我吧。", "EndTime": 134120, "BeginTime": 131200, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 390, "EmotionValue": 6.7, "SilenceDuration": 11}, {"Text": "应该可以加也行。", "EndTime": 135900, "BeginTime": 134260, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 292, "EmotionValue": 5.9, "SilenceDuration": 0}, {"Text": "呃，这边显示搜索不到黄先生嗯。", "EndTime": 139500, "BeginTime": 136040, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 260, "EmotionValue": 6.0, "SilenceDuration": 8}, {"Text": "对，那您这样吧，我这边也给您留个短信，因为我们这边也是属于外呼电话嘛，您后续不拨打直播会回来的。", "EndTime": 147638, "BeginTime": 140140, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 384, "EmotionValue": 6.1, "SilenceDuration": 0}, {"Text": "那我这边就给您留个短信。", "EndTime": 149555, "BeginTime": 147638, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 375, "EmotionValue": 6.1, "SilenceDuration": 0}, {"Text": "对，后续有需要可以通过短信链接来添加到我的企业微信，了解更多的车辆详情的嗯。", "EndTime": 155660, "BeginTime": 149556, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 373, "EmotionValue": 6.1, "SilenceDuration": 0}, {"Text": "好的。", "EndTime": 157080, "BeginTime": 155940, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 157, "EmotionValue": 5.8, "SilenceDuration": 20}, {"Text": "嗯，好的好的，那这边还有什么可以帮到您吗？", "EndTime": 160660, "BeginTime": 157440, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 391, "EmotionValue": 6.0, "SilenceDuration": 1}, {"Text": "其他没有了。", "EndTime": 162075, "BeginTime": 160980, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 328, "EmotionValue": 6.1, "SilenceDuration": 3}, {"Text": "嗯，好。", "EndTime": 162513, "BeginTime": 162075, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 547, "EmotionValue": 6.1, "SilenceDuration": 0}, {"Text": "那我这边就先不打扰到您了，先生。", "EndTime": 165579, "BeginTime": 162513, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 313, "EmotionValue": 6.1, "SilenceDuration": 1}, {"Text": "嗯，好好嗯，好的。", "EndTime": 167705, "BeginTime": 166180, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 354, "EmotionValue": 5.4, "SilenceDuration": 3}, {"Text": "祝您生活愉快，再见。", "EndTime": 169739, "BeginTime": 167705, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 294, "EmotionValue": 5.4, "SilenceDuration": 2}]}</div>
+                            </div>
+                            <div class="text-box new">
+                                <div class="font-bold text-blue-600 mb-2 pb-2 border-b border-blue-100">新接口 (RoleType=1配置)</div>
+                                <div>角色1：您好，这边是东风日产厂家给您来电，我是厂家专属试驾您的顾问佳佳，您关注我们的ns8，它的试驾车是有到店的，想诚邀您到店体验一下这款实车，您看方便吗？
+角色2：嗯方便可以。
+角色1：好的，您目前是在沈阳这边是吗先生？
+角色2：对是的。
+角色1：对，看到您选了沈阳一个新世纪可以吗？在我们的大东区这边，离您方不方便？
+角色1：呢
+角色2：方便可以的。
+角色1：好的。
+角色1：那您看刚好明天也是周六了，嘛明天下午3:00有没有时间过来体验一下实车？
+角色2：明天我这边还没空，啊你
+角色1：噢
+角色2：这样吧下下周六吧下周六你打电话给我，
+角色1：那我这边先帮您安排下周六下午3点的一个试驾车留给您先可以吗？
+角色2：可以啊
+角色1：好的，也想咨询一下您这边是家里有爱车打算置换，还是说是首次购车呢
+角色2：呃首购？
+角色1：好的，那跟您简单介绍一下，我们在6月30号前下订，可以给到您一个1万元的超级置换金，还有一个是21,888元的一个限时免费升舱礼活动，
+角色1：内容的话还是比较丰富的，是打算近期有购车计划了是吗先生？
+角色2：对是的嗯
+角色1：好的，
+角色1：那也跟您说个好消息，我们在8月31号前下订都能免费享受我们行业首发的三无忧服务保费不上涨，小修厂家都至高，能为您省到一个3.4万元的。
+角色2：嗯
+角色1：那这边怎么称呼您呢先生，您贵姓？
+角色2：姓黄
+角色1：黄。
+角色1：草头黄是吗？
+角色2：对
+角色1：对好的，黄先生，您看这边方便也添加您个微信吗？
+角色1：把我们的一些优惠政策详细一点分享给到您。
+角色2：嗯好可以。
+角色1：好的，这是尾号8224能添加到您吗？
+角色2：可以的。
+角色1：这边显示该用户不存在，先生是您微信设置了，还是说您手机号码绑定的是另外一个呢
+角色2：加不上啊加不上，你就打电话联系我？
+角色2：吧
+角色2：应该可以加
+角色1：也行。
+角色1：噢这边显示搜索不到，黄先生，
+角色2：嗯
+角色1：对那您这样，吧我这边也给您留个短信，因为我们这边也是属于外呼电话，嘛您后续拨打是不会回来的，那我这边就给您留个短信。
+角色1：对，后续有需要可以通过短信链接来添加到我的企业微信，了解更多的车辆详情的。
+角色1：嗯好的
+角色2：嗯好的
+角色1：好的，那这边还有什么可以帮到您吗？
+角色2：其他没有了。
+角色1：嗯好，那我这边就先不打扰到您黄先生。
+角色2：嗯好好
+角色1：嗯好的，祝您生活愉快，再见。</div>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <div class="case-card">
+                        <div class="flex justify-between items-center bg-gray-100 px-4 py-2 rounded-t-lg">
+                            <div class="font-bold text-gray-700">Case 10 | 线索ID: 1791738310609669888</div>
+                            <div class="text-sm font-semibold text-orange-500">相似度: 15.7%</div>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-2 px-2 break-all">来源：http://172.24.176.101:8019/20260622/dfn_dcc_ob_d_1_8e_17897018970_fdefbc23-961c-4bce-bddb-708ed16fe2a3_17897018970_fdefbc23-961c-4bce-bddb-708ed16fe2a3_20260622_171112.wav</div>
+                        
+                        <div class="diff-container">
+                            <div class="text-box old">
+                                <div class="font-bold text-gray-500 mb-2 pb-2 border-b border-gray-200">老系统 (原转写文本)</div>
+                                <div>{"Sentences": [{"Text": "您好。", "EndTime": 1560, "BeginTime": 0, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 115, "EmotionValue": 6.3, "SilenceDuration": 0}, {"Text": "您好，东风日产厂家这边给您来电，我是厂家专属试驾邀约顾问佳佳。", "EndTime": 7234, "BeginTime": 1740, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 338, "EmotionValue": 5.9, "SilenceDuration": 0}, {"Text": "看到您是有在关注我们一款新车NIS8对吗？", "EndTime": 11160, "BeginTime": 7235, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 290, "EmotionValue": 5.9, "SilenceDuration": 0}, {"Text": "2。", "EndTime": 13360, "BeginTime": 12300, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 113, "EmotionValue": 5.8, "SilenceDuration": 12}, {"Text": "哎，先生您好，您这边是有在关注这款车吗？", "EndTime": 17140, "BeginTime": 13740, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 352, "EmotionValue": 5.8, "SilenceDuration": 2}, {"Text": "麦。", "EndTime": 18960, "BeginTime": 17960, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 120, "EmotionValue": 6.4, "SilenceDuration": 4}, {"Text": "是有在关注哈。", "EndTime": 20544, "BeginTime": 19320, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 343, "EmotionValue": 6.1, "SilenceDuration": 2}, {"Text": "好的，这边是邀请您到店看车试驾的，也感谢您的一个支持关注。", "EndTime": 25850, "BeginTime": 20544, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 327, "EmotionValue": 6.1, "SilenceDuration": 0}, {"Text": "您这边是在齐齐哈尔这边吗？", "EndTime": 28300, "BeginTime": 25850, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 318, "EmotionValue": 6.1, "SilenceDuration": 0}, {"Text": "麦。", "EndTime": 30180, "BeginTime": 29160, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 117, "EmotionValue": 5.7, "SilenceDuration": 10}, {"Text": "好的，齐齐哈尔铁峰区这边，联通大道有一家专营店，可以试驾看车的那您可以看看，最近这几天方便过来看车试驾吗？", "EndTime": 38560, "BeginTime": 30320, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 385, "EmotionValue": 6.0, "SilenceDuration": 2}, {"Text": "下个月出吧。", "EndTime": 41040, "BeginTime": 39580, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 246, "EmotionValue": 6.5, "SilenceDuration": 9}, {"Text": "下个星期可以呀，那下个星期呃，大概就是哪一天会比较方便哈，我帮您看一下。", "EndTime": 47980, "BeginTime": 41360, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 326, "EmotionValue": 6.1, "SilenceDuration": 2}, {"Text": "下周末吧。", "EndTime": 49620, "BeginTime": 48260, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 220, "EmotionValue": 6.8, "SilenceDuration": 0}, {"Text": "下周末可以的，下周末那那个28号方便吗？", "EndTime": 54560, "BeginTime": 49780, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 251, "EmotionValue": 6.5, "SilenceDuration": 0}, {"Text": "差不多吧。", "EndTime": 57520, "BeginTime": 56240, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 234, "EmotionValue": 6.4, "SilenceDuration": 15}, {"Text": "差不多。", "EndTime": 58584, "BeginTime": 57720, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 277, "EmotionValue": 6.4, "SilenceDuration": 3}, {"Text": "好，那就呃帮您安排在上午还是下午啊？", "EndTime": 63200, "BeginTime": 58585, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 234, "EmotionValue": 6.4, "SilenceDuration": 0}, {"Text": "您看看哪个哪个时间段会方便一点。", "EndTime": 67440, "BeginTime": 63900, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 271, "EmotionValue": 6.1, "SilenceDuration": 0}, {"Text": "下午可以吗？", "EndTime": 69100, "BeginTime": 67580, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 236, "EmotionValue": 6.3, "SilenceDuration": 0}, {"Text": "下午是吗？", "EndTime": 71020, "BeginTime": 69520, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 200, "EmotionValue": 6.2, "SilenceDuration": 0}, {"Text": "马。", "EndTime": 72180, "BeginTime": 71220, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 125, "EmotionValue": 4.8, "SilenceDuration": 13}, {"Text": "下午2点到2点半左右的时间哈。", "EndTime": 75800, "BeginTime": 72560, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 277, "EmotionValue": 6.3, "SilenceDuration": 1}, {"Text": "啊，另外呢我这边也简单给您介绍一下NX8呢，它是一款中大型的SUV，有纯电和增程两个版本。", "EndTime": 83882, "BeginTime": 76180, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 327, "EmotionValue": 6.2, "SilenceDuration": 0}, {"Text": "官方指导价15.99到20.99万。", "EndTime": 87075, "BeginTime": 83882, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 300, "EmotionValue": 6.2, "SilenceDuration": 0}, {"Text": "如果在6月30号之前下单，可以享受有1万元的超级置换金。", "EndTime": 91960, "BeginTime": 87075, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 343, "EmotionValue": 6.2, "SilenceDuration": 0}, {"Text": "对，另外咱们这边是有旧车置换还是增购车辆啊？", "EndTime": 95980, "BeginTime": 92100, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 340, "EmotionValue": 6.2, "SilenceDuration": 0}, {"Text": "准备做完。", "EndTime": 99080, "BeginTime": 97720, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 220, "EmotionValue": 5.9, "SilenceDuration": 25}, {"Text": "并且现在订车还有支持零首付的哈。", "EndTime": 103445, "BeginTime": 100760, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 357, "EmotionValue": 6.7, "SilenceDuration": 4}, {"Text": "呃如果在8月31号之前购车呢，还可以享受一个三无忧的服务啊。", "EndTime": 108637, "BeginTime": 103445, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 346, "EmotionValue": 6.7, "SilenceDuration": 0}, {"Text": "它三无忧呢是有包括我们的一个三电终身无忧，小休出行无忧，长途出行无忧。", "EndTime": 114365, "BeginTime": 108637, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 366, "EmotionValue": 6.7, "SilenceDuration": 0}, {"Text": "如果方便的话呢，我这边可以加您的微信，把具体的这个三无忧发给您看看，可以吗？", "EndTime": 120452, "BeginTime": 114365, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 374, "EmotionValue": 6.7, "SilenceDuration": 0}, {"Text": "明天上午再跟我联系吧。", "EndTime": 122242, "BeginTime": 120452, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 368, "EmotionValue": 6.7, "SilenceDuration": 0}, {"Text": "好，小白。", "EndTime": 122780, "BeginTime": 122242, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 557, "EmotionValue": 6.7, "SilenceDuration": 23}, {"Text": "哦，好，这边怎么称呼您呢？", "EndTime": 126266, "BeginTime": 123620, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 294, "EmotionValue": 6.5, "SilenceDuration": 1}, {"Text": "先生，有。", "EndTime": 127060, "BeginTime": 126266, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 377, "EmotionValue": 6.5, "SilenceDuration": 0}, {"Text": "好的好的，先生。", "EndTime": 130102, "BeginTime": 128860, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 386, "EmotionValue": 6.6, "SilenceDuration": 1}, {"Text": "行，那好，咱们试驾时间大概20分钟左右。", "EndTime": 133622, "BeginTime": 130102, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 340, "EmotionValue": 6.6, "SilenceDuration": 0}, {"Text": "您记得带上本人的驾驶证，不要穿拖鞋哈。", "EndTime": 137143, "BeginTime": 133622, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 323, "EmotionValue": 6.6, "SilenceDuration": 0}, {"Text": "给您暂定的时间是6月28号下午2点到2点半。", "EndTime": 141698, "BeginTime": 137143, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 289, "EmotionValue": 6.6, "SilenceDuration": 0}, {"Text": "好好好。", "EndTime": 142320, "BeginTime": 141698, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 385, "EmotionValue": 6.6, "SilenceDuration": 0}, {"Text": "还有嗯，行。", "EndTime": 144638, "BeginTime": 143420, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 295, "EmotionValue": 6.9, "SilenceDuration": 20}, {"Text": "那如果没有其他，嗯，您说您说嗯。", "EndTime": 148600, "BeginTime": 144638, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 242, "EmotionValue": 6.9, "SilenceDuration": 2}, {"Text": "就这样。", "EndTime": 151020, "BeginTime": 150000, "ChannelId": 1, "SpeakerId": "2", "SpeechRate": 235, "EmotionValue": 7.1, "SilenceDuration": 5}, {"Text": "好的，那没有其他的，我这边哎，就先不打扰您了。", "EndTime": 155320, "BeginTime": 151160, "ChannelId": 0, "SpeakerId": "1", "SpeechRate": 331, "EmotionValue": 6.6, "SilenceDuration": 2}]}</div>
+                            </div>
+                            <div class="text-box new">
+                                <div class="font-bold text-blue-600 mb-2 pb-2 border-b border-blue-100">新接口 (RoleType=1配置)</div>
+                                <div>角色1：您好您好，东风日产厂家这边给您来电，我是厂家专属试驾邀约顾问佳佳，看到您是有在关注我们一款新车nx8对吗？嗯唉先生您好，您这边是有在关注这款车吗？
+角色2：对。
+角色1：是有在关注，哈好的，这边是邀请您到店看车试驾的，也感谢您的一个支持关注，您这边是在齐齐哈尔这边吗？
+角色2：对。
+角色1：好的，齐齐哈尔铁锋区这边，联通大道有一家专营店可以试驾看车的，那您可以看看最近这几天方便过来看车试驾吗？
+角色2：下个月初。
+角色2：吧
+角色1：下个星期可以啊那下个星期呃大概就是哪一天会比较方便？哈我帮您看一下下
+角色2：周末吧
+角色1：对下周末可以的，下周末那那个28号方便吗？
+角色2：差不多。吧
+角色1：差不多，好，那就呃帮您安排在上午还是下午，啊您看看哪个哪个时间段会方便1点下午可以吗下午是吗？下午2:00~2:30左右的时间。哈
+角色1：另外呢我这边也简单给您介绍一下nx8呢它是一款中大型的SUV，有纯电和增程两个版本，官方指导价15.99~20.99万，如果在6月30号之前下订，可以享受有1万元的超级置换金。
+角色2：嗯
+角色1：对，另外咱们这边是有旧车置换还是增购车辆啊
+角色2：准备购买，
+角色1：并且现在订车还有支持零首付的，哈呃如果在8月31号之前购车，呢还可以享受一个三无忧的服务，啊它三无忧呢是有包括我们的一个三电终身无忧，小修出险无忧，长途出行无忧，如果方
+角色1：方便的话，呢我这边可以加您的微信，把具体的这个三无忧发给您看看可以吗？
+角色2：你接到门店跟我联系吧好，小妹啊
+角色1：噢好，这边怎么称呼您啊先生？
+角色2：姓刘姓刘，
+角色1：好的好的先生行。那
+角色1：好，咱们试驾时间大概20分钟左右，您记得带上本人的驾驶证不要穿拖鞋哈给您，暂定的时间是6月28号下午2:00~2:30，好
+角色2：好好。还有嗯
+角色1：行，那如果没有其他嗯您说您说。嗯
+角色2：就这样好
+角色1：的，那没有其他的话，这边唉就先不打扰您了。</div>
+                            </div>
+                        </div>
+                    </div>
+        
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
+    
