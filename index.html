@@ -15,24 +15,47 @@
         </div>
         
         <div class="bg-blue-50 p-6 rounded-xl border border-blue-200">
-            <h2 class="text-lg font-bold text-blue-800 mb-3">📝 核心评测结论</h2>
-            <div class="space-y-4 text-blue-900 text-sm leading-relaxed">
-                <p><strong>1. 新版 ASR 底座能力全面领先：</strong> 新引擎在断句逻辑、角色切分、同音字纠错、语意连贯性上全面优于旧版。即便在增加了热词的复杂情况下，以下底座纠错能力依然100%稳定发挥：</p>
-                <ul class="list-disc list-inside space-y-1 ml-4 mb-4 text-blue-800 text-sm">
-                    <li><strong>车型配置：</strong> 旧版“出产国金融” 👉 新版纠错为“<strong>舒享SUV</strong>”（<a href="#1791743636369121315" class="text-blue-600 hover:underline">线索ID: 1791743636369121315</a>）</li>
-                    <li><strong>促销活动：</strong> 旧版“免费三车礼” 👉 新版纠错为“<strong>免费升舱礼</strong>”（<a href="#1791753136843538434" class="text-blue-600 hover:underline">线索ID: 1791753136843538434</a>）</li>
-                    <li><strong>邀约术语：</strong> 旧版“是城市家/自驾试驾” 👉 新版纠错为“<strong>试乘试驾/到店试驾</strong>”（<a href="#1791753136843538434" class="text-blue-600 hover:underline">线索ID: 1791753136843538434</a>）</li>
-                    <li><strong>地名识别：</strong> 旧版“油糕店” 👉 新版纠错为南通的“<strong>如皋店</strong>”（<a href="#1791753136843538434" class="text-blue-600 hover:underline">线索ID: 1791753136843538434</a>）</li>
-                    <li><strong>行业黑话：</strong> 旧版“就是能够/07年” 👉 新版纠错为“<strong>增购/漆面</strong>”（<a href="#1791743636369121315" class="text-blue-600 hover:underline">线索ID: 1791743636369121315</a>）</li>
-                </ul>
-                <p><strong>2. 热词加持实现垂类术语精准识别：</strong> 在新引擎强悍的底座之上，热词功能专门攻克了汽车行业专有名词和业务术语的识别难题。以下为典型案例：</p>
-                <ul class="list-disc list-inside space-y-3 bg-white p-4 rounded-lg border border-blue-100 shadow-sm">
-                    <li><strong>车型+座舱名精准锁定（<a href="#1791211197870129158" class="text-blue-600 hover:underline">线索ID: 1791211197870129158</a>）：</strong> 旧版在开场将车型识别断裂。新版精准命中<span class="text-purple-600 font-bold">"轩逸经典"</span>和<span class="text-purple-600 font-bold">"天籁鸿蒙座舱"</span>等车型热词，并在后续沟通中完整还原了<span class="text-purple-600 font-bold">"落地价"</span>金融政策长句。</li>
-                    <li><strong>售后政策黑话纠错（<a href="#1791669694212563022" class="text-blue-600 hover:underline">线索ID: 1791669694212563022</a>）：</strong> 旧版由于缺失业务语境，完全丢失了售后保障条款。新版命中<span class="text-purple-600 font-bold">"保险"</span>热词后，精准还原了"漆面保险杠玻璃可以免费换"等售后政策长句。</li>
-                    <li><strong>交易核心词防截断（<a href="#1791743653551144973" class="text-blue-600 hover:underline">线索ID: 1791743653551144973</a>）：</strong> 销售提到<span class="text-purple-600 font-bold">"落地价"</span>时，旧版常因语速较快导致前后文识别模糊。新版精准命中交易核心词，顺畅衔接了完整的购车方案。</li>
-                    <li><strong>置换政策长句完整还原（<a href="#1791688557708992543" class="text-blue-600 hover:underline">线索ID: 1791688557708992543</a>）：</strong> 客户追问政策细节时，旧版直接发生了整段丢失。新版借助<span class="text-purple-600 font-bold">"置换补贴"</span>、<span class="text-purple-600 font-bold">"零首付"</span>、<span class="text-purple-600 font-bold">"增程"</span>等一揽子热词，一字不落地还原了完整的业务交流。</li>
-                    <li><strong>"增程"版本差异精准区分（<a href="#1791638890707116095" class="text-blue-600 hover:underline">线索ID: 1791638890707116095</a>）：</strong> 旧版在处理老客户（<span class="text-purple-600 font-bold">"奇骏"</span>车主）咨询时出现断裂。新版不仅准确识别了老车型，还精准保留了<span class="text-purple-600 font-bold">"置换补贴"</span>政策和<span class="text-purple-600 font-bold">"增程"</span>版本的关键产品差异。</li>
-                </ul>
+            <h2 class="text-lg font-bold text-blue-800 mb-3">📝 核心评测结论（全量深度解析）</h2>
+            <div class="space-y-6 text-blue-900 text-sm leading-relaxed">
+                
+                <div>
+                    <h3 class="font-bold text-base text-blue-700 border-b border-blue-200 pb-1 mb-2">1. 核心业务热词是否生效？（100% 靶向生效，纠正离谱错误）</h3>
+                    <p class="mb-2">热词在本次测试中表现出极强的**“强行纠偏”**能力，将旧版大量极其离谱、严重偏离业务属性的错音全部拉回了正轨：</p>
+                    <ul class="list-disc list-inside space-y-1 ml-4 bg-white p-3 rounded-lg border border-blue-100 shadow-sm">
+                        <li><strong>购车类型：</strong> 旧版“手工” 👉 新版精准纠正为“<span class="text-purple-600 font-bold">首购</span>”（<a href="#1791626211965272071" class="text-blue-600 hover:underline">1791626211965272071</a>）</li>
+                        <li><strong>购车类型：</strong> 旧版“就是能够” 👉 新版精准纠正为“<span class="text-purple-600 font-bold">增购</span>”（<a href="#1791743636369121315" class="text-blue-600 hover:underline">1791743636369121315</a>）</li>
+                        <li><strong>价格术语：</strong> 旧版“官方展现在在” 👉 新版精准纠正为“<span class="text-purple-600 font-bold">指导价</span>格”（<a href="#1791743636369121315" class="text-blue-600 hover:underline">1791743636369121315</a>）</li>
+                        <li><strong>时间邀约：</strong> 旧版由于口音把周六识别成了不堪入目的“音乐约炮2” 👉 新版精准听出了邀约词“<span class="text-purple-600 font-bold">周六</span>周天”（<a href="#1791681462416375892" class="text-blue-600 hover:underline">1791681462416375892</a>）</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="font-bold text-base text-blue-700 border-b border-blue-200 pb-1 mb-2">2. 汽车行业术语、车型名称是否转写更准？（精准锁定特有名词）</h3>
+                    <p class="mb-2">对于汽车行业自创的“黑话”和字母数字组合，新版识别能力呈碾压态势：</p>
+                    <ul class="list-disc list-inside space-y-1 ml-4 bg-white p-3 rounded-lg border border-blue-100 shadow-sm">
+                        <li><strong>车型代号纠错：</strong> 旧版常常听错代号（如“NX3”） 👉 新版稳稳识别出主推的“<span class="text-purple-600 font-bold">nx8</span>”（<a href="#1791663183042207767" class="text-blue-600 hover:underline">1791663183042207767</a>）</li>
+                        <li><strong>核心卖点话术（高频灾区）：</strong> 销售高频提到“大五座智慧舒享SUV”，旧版曾离谱识别为“智慧出险保险”、“智慧速箱SUV”、“智慧智小SUV” 👉 新版统一、准确地识别为产品卖点“<span class="text-purple-600 font-bold">大5座智慧舒享SUV</span>”（<a href="#1791643254393954331" class="text-blue-600 hover:underline">1791643254393954331</a> 等多条）</li>
+                        <li><strong>动力版本区分：</strong> 旧版在客户询问纯电还是增程时经常丢失关键信息 👉 新版不仅准确抓取了“<span class="text-purple-600 font-bold">纯电</span>”，还能精准保留“<span class="text-purple-600 font-bold">增程</span>”版本选项。</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="font-bold text-base text-blue-700 border-b border-blue-200 pb-1 mb-2">3. 地点、门店、城市等基础信息是否转写更准？（告别门店名称灾难）</h3>
+                    <p class="mb-2">销售邀约到店的转化环节中，地点和店名的识别至关重要，新版在此展现了极佳的语境联想能力：</p>
+                    <ul class="list-disc list-inside space-y-1 ml-4 bg-white p-3 rounded-lg border border-blue-100 shadow-sm">
+                        <li><strong>门店名称神还原：</strong> 旧版“乌海洪东森林” 👉 新版还原为正确的“<span class="text-purple-600 font-bold">乌海宏通4s店</span>”（<a href="#1791642378220150793" class="text-blue-600 hover:underline">1791642378220150793</a>）</li>
+                        <li><strong>身份定位纠错：</strong> 旧版“北京富源一中的这个电脑销售顾问” 👉 新版正确结合上下文识别为“<span class="text-purple-600 font-bold">北京富源一众的这个店的销售顾问</span>”（<a href="#1791669522416394257" class="text-blue-600 hover:underline">1791669522416394257</a>）</li>
+                        <li><strong>同音地名纠正：</strong> 旧版“油糕店” 👉 新版带热词后识别为江苏南通的“<span class="text-purple-600 font-bold">如皋店</span>”。</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="font-bold text-base text-blue-700 border-b border-blue-200 pb-1 mb-2">4. 其它维度更优的分析（政策黑话拆解与交互断句）</h3>
+                    <ul class="list-disc list-inside space-y-2 ml-4 bg-white p-3 rounded-lg border border-blue-100 shadow-sm">
+                        <li><strong>极度相似的政策词精准区分：</strong> 旧版将销售提到的地方性补贴“省补”错误识别成了售后维保概念的“首保”；新版依靠更强的语意分析，在上下文是购车优惠的情况下，精准定调为“<span class="text-purple-600 font-bold">省补</span>”（<a href="#1791694811183054888" class="text-blue-600 hover:underline">1791694811183054888</a>）。</li>
+                        <li><strong>角色分离（Diarization）脱胎换骨：</strong> 旧版最大的问题在于“一坨文本”，无论销售和客户怎么对话，都会挤在一起没有标点，根本无法拆解意图。新版的底座能力将“角色1（销售）”和“角色2（客户）”拆分得清清楚楚，标点符号（尤其是疑问句的问号）停顿完全符合人类真实的交流节奏。</li>
+                    </ul>
+                </div>
             </div>
         </div>
         
